@@ -4,3 +4,4 @@ go.sum
 vpnc-web-ui-*
 localconfig.json
 conf/*.conf
+releases
