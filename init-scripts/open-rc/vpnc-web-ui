@@ -1,4 +1,7 @@
 #!/sbin/openrc-run
-command=/opt/vpnc-web-ui/vpnc-web-ui-aarch64
+command="/opt/vpnc-web-ui/vpnc-web-ui-aarch64"
+command_args="-configFilePath /opt/vpnc-web-ui/conf/config.json"
+command_background=true
+pidfile="/run/${RC_SVCNAME}.pid"
 
 cd /opt/vpnc-web-ui/
