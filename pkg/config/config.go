@@ -31,8 +31,9 @@ func (c *Config) LogConfig() {
 		"VPNC Disconnect Command: %s\n"+
 		"VPNC Config Folder (*.conf): %s\n"+
 		"PID File: %s\n"+
+		"Wait time after connect (waiting for background job to start): %d seconds\n"+
 		"Web UI Port: %d\n"+
 		"IP Echo URL: %s\n",
-		c.VPNC.ConnectCommand, c.VPNC.ConnectCommand, c.VPNC.ConfigFolder, c.VPNC.PIDFile,
+		c.VPNC.ConnectCommand, c.VPNC.ConnectCommand, c.VPNC.ConfigFolder, c.VPNC.PIDFile, c.VPNC.WaitTimeAfterConnect,
 		c.WebUI.ServerPort, c.WebUI.IPEchoURL)
 }

@@ -6,24 +6,27 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type VPNC struct {
-	connectCommand    string
-	disconnectCommand string
-	configFolder      string
-	pidFile           string
+	connectCommand       string
+	disconnectCommand    string
+	configFolder         string
+	pidFile              string
+	waitTimeAfterConnect int
 }
 
 func New(connectCommand string, disconnectCommand string,
-	configFolder string, pidFile string) *VPNC {
+	configFolder string, pidFile string, waitTimeAfterConnect int) *VPNC {
 	return &VPNC{
-		connectCommand:    connectCommand,
-		disconnectCommand: disconnectCommand,
-		configFolder:      configFolder,
-		pidFile:           pidFile,
+		connectCommand:       connectCommand,
+		disconnectCommand:    disconnectCommand,
+		configFolder:         configFolder,
+		pidFile:              pidFile,
+		waitTimeAfterConnect: waitTimeAfterConnect,
 	}
 }
 
@@ -84,6 +87,8 @@ func (v *VPNC) Connect(vpncConfig string) (string, error) {
 			v.connectCommand, vpncConfig, err.Error())
 	}
 	log.Infof("Connect to %s successful", vpncConfig)
+
+	time.Sleep(time.Duration(v.waitTimeAfterConnect) * time.Second)
 	return string(result), nil
 }
 

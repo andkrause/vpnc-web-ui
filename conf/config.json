@@ -3,7 +3,8 @@
         "connectCommand": "/usr/sbin/vpnc",
         "disconnectCommand": "/usr/sbin/vpnc-disconnect",
         "pidFile": "/var/run/vpnc.pid",
-        "configFolder": "/etc/vpnc/"
+        "configFolder": "/etc/vpnc/",
+        "waitTimeAfterConnect": 1
     },
     "webUI": {
         "serverPort": 80,

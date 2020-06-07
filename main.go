@@ -31,7 +31,7 @@ func main() {
 	}
 
 	vpncClient := vpnc.New(serverConfig.VPNC.ConnectCommand, serverConfig.VPNC.DisconnectCommand,
-		serverConfig.VPNC.ConfigFolder, serverConfig.VPNC.PIDFile)
+		serverConfig.VPNC.ConfigFolder, serverConfig.VPNC.PIDFile, serverConfig.VPNC.WaitTimeAfterConnect)
 
 	//Serve UI
 	ui, err := web.New(vpncClient, serverConfig.WebUI.IPEchoURL)
