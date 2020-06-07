@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>VPN Configurations</title>
+        <link rel="stylesheet" type="text/css" href="static/formatting.css">
+</head>
+
+<body>
+
+        <div id="header">
+                <h1>VPN Configurations</h1>
+        </div>
+        <div id="content">
+                <div class="article">
+                        <h2>VPN Setup</h2>
+
+                        
+                        <p>Current Status: {{.ConnectionState}}</p>
+                     
+
+                        <form method="POST">
+                                {{range .ConfigurationList}}
+                                        <p>
+                                                <input type="radio" id="{{.}}" name="vpnconfig" value="{{.}}"/><label
+                                                        for="{{.}}">{{.}}</label>
+                                        </p>
+                                {{end}}
+                                <p>
+                                        <input type="radio" id="disconnect" name="vpnconfig" value="disconnect" /><label
+                                                for="disconnect">Disconnect</label>
+                                </p>
+                                <p>
+                                        <input type="submit" id="submit" value="Submit">
+                                </p>
+                        </form>
+                </div>
+                <div class="article">
+                        <h2>Current IP</h2>
+                        <p>Current IP: {{.OwnPublicIP}}</p>
+                </div>
+
+                {{if .CommandResults}}
+                <div class="article">
+                        <h2>Result</h2>
+                        <ul>
+                                {{range .CommandResults}}
+                                        <li>Message: {{.}}</li>
+                                {{end}}
+                        </ul>
+                </div>
+                {{end}}
+
+        </div>
+</body>
+
+</html>

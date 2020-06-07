@@ -1,0 +1,12 @@
+{
+    "vpnc": {
+        "connectCommand": "/usr/sbin/vpnc",
+        "disconnectCommand": "/usr/sbin/vpnc-disconnect",
+        "pidFile": "/var/run/vpnc.pid",
+        "configFolder": "/etc/vpnc/"
+    },
+    "webUI": {
+        "serverPort": 80,
+        "ipEchoURL": "https://ipecho.net/plain"
+    }
+}

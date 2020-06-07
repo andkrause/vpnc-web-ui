@@ -1,0 +1,6 @@
+.vscode
+go.sum
+.DS_Store
+vpnc-web-ui-*
+localconfig.json
+conf/*.conf
