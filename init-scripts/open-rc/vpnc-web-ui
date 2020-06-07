@@ -1,0 +1,4 @@
+#!/sbin/openrc-run
+command=/opt/vpnc-web-ui/vpnc-web-ui-aarch64
+
+cd /opt/vpnc-web-ui/

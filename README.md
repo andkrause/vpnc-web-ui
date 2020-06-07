@@ -1,4 +1,11 @@
-# vpnc-web-ui
+# VPNC Web UI
+
+## Table Of Contents 
+- [VPNC Web UI](#vpnc-web-ui)
+  - [Table Of Contents](#table-of-contents)
+  - [Configuration](#configuration)
+  - [Install](#install)
+  - [Build](#build)
 
 This is a small web ui on top of [vpnc](https://davidepucci.it/doc/vpnc/). I use this to remote-control my IPSec vpn gateway running on top of a Raspberry Pi 4b. It basically replaces the need to run shell commands.
 
@@ -43,6 +50,8 @@ Appearance is driven by the ccs locate in `static/formatting.css`. Again, if you
 ## Install
 
 The releases section contains a couple of versions that you can install without building. Just download and extract. Pick the file for your environment (currently linux/aarch64, macos and linux/arm64 are available) and execute.
+
+To start the server use and init-script. Samples are found in this [init scripts directory](init-scripts/).
 
 ## Build 
 
