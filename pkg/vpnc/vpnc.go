@@ -77,7 +77,7 @@ func (v *VPNC) Connect(vpncConfig string) (string, error) {
 	// Always make sure you are disconnected error can be ignored ;-)
 	v.Disconnect()
 
-	cmd := exec.Command(v.connectCommand, vpncConfig)
+	cmd := exec.Command(v.connectCommand, fmt.Sprintf("%s%s", v.configFolder, vpncConfig))
 
 	result, err := cmd.Output()
 	if err != nil {

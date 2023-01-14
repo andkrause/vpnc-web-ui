@@ -6,6 +6,7 @@
   - [Configuration](#configuration)
   - [Install](#install)
   - [Build](#build)
+  - [Docker](#docker)
 
 This is a small web ui on top of [vpnc](https://davidepucci.it/doc/vpnc/). I use this to remote-control my IPSec vpn gateway running on top of a Raspberry Pi 4b. It basically replaces the need to run shell commands.
 
@@ -67,6 +68,64 @@ To build for alternative OS/Platform like the Rasperrry Pi use:
 GOOS=linux GOARCH=arm64 go build -o vpnc-web-ui-aarch64  main.go 
 ```
 
+## Docker
+
+The gateway can also be deployed as a docker container. I use this to simplify maintenance and ensure portability. But be aware this is still abit experimental and probably depends a lot on how docker is setup on the host itself. 
+
+To run the gateway on a dedicated IP with **full** network access (which is required), I use  a [macvlan network](https://docs.docker.com/network/macvlan/). This network named `docker_public_services` is pre-created using the following command:
+
+```
+docker network create -d macvlan -o parent=<network interface name> \
+  --subnet <cidr of the subnet> \
+  --gateway <"real" gateway in the subnet> \
+  --ip-range <if addresses you want to assign> \
+  docker_public_services
+
+```
+
+If you want to run just one instance a host network might work as well.
+
+To start the container as a service and attach it to the pre-created macvlan `docker_public_services` the following compose file can serve as a baseline :
+
+```
+version: "2.4"
+services:
+    vpnc:
+        image: andy008/vpnc-web-ui:latest
+        init: true
+        restart: "always"
+        cap_add:
+            - NET_ADMIN
+            - NET_RAW
+        mem_limit: 256m
+        cpus: 0.5
+        networks:
+            docker_public_services: 
+                ipv4_address: "<your gateways fixed local IP>"
+        volumes:
+            -  type: volume
+               source: vpnc_config
+               target: /etc/vpnc/mountedconfig
+               read_only: false 
+
+networks:
+  docker_public_services:
+    external: true
+
+
+volumes:
+    vpnc_config:
+       driver: local
+       driver_opts:
+          o: bind
+          type: none
+          device: <path to vpnc config>
+
+```
+
+To enable this on a fresh ubuntu 22.04 LTS on a raspberry PI I had to install `linux-modules-extra-raspi` and add the below iptables firewall rule: `iptables -I FORWARD -i eth0 -o eth0 -j ACCEPT`
+
+Since iptables are not persisted by default, you need to apply it after every restart (or persist iptables ;-))
 
 
 
