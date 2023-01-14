@@ -9,7 +9,7 @@ RUN go mod download
 
 COPY main.go ./
 
-RUN go build -o /vpnc-web-ui main.go
+RUN go mod tidy && go build -o /vpnc-web-ui main.go
 
 ## Deploy
 FROM alpine:3.17
