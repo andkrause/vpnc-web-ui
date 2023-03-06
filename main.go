@@ -30,11 +30,12 @@ func main() {
 		os.Exit(2)
 	}
 
-	vpncClient := vpnc.New(serverConfig.VPNC.ConnectCommand, serverConfig.VPNC.DisconnectCommand,
-		serverConfig.VPNC.ConfigFolder, serverConfig.VPNC.PIDFile, serverConfig.VPNC.WaitTimeAfterConnect)
+	vpncClient := vpnc.New(serverConfig.ConnectCommand, serverConfig.DisconnectCommand,
+		serverConfig.ConfigFolder, serverConfig.WaitTimeAfterConnect,
+		serverConfig.IPEchoURL, serverConfig.GetMaxAgePublicIpDuration())
 
 	//Serve UI
-	ui, err := web.New(vpncClient, serverConfig.WebUI.IPEchoURL)
+	ui, err := web.New(vpncClient, serverConfig.IPEchoURL)
 	if err != nil {
 		log.Error(err.Error())
 		os.Exit(2)
@@ -47,7 +48,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix(strings.TrimRight("/static/", "/"), staticFileServer))
 
 	server := http.Server{
-		Addr: fmt.Sprintf(":%d", serverConfig.WebUI.ServerPort),
+		Addr: fmt.Sprintf(":%d", serverConfig.ServerPort),
 	}
 
 	fmt.Println("Starting server with config:")

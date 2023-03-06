@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -30,10 +31,18 @@ func (c *Config) LogConfig() {
 	fmt.Printf("VPNC Connect Command: %s\n"+
 		"VPNC Disconnect Command: %s\n"+
 		"VPNC Config Folder (*.conf): %s\n"+
-		"PID File: %s\n"+
 		"Wait time after connect (waiting for background job to start): %d seconds\n"+
 		"Web UI Port: %d\n"+
-		"IP Echo URL: %s\n",
-		c.VPNC.ConnectCommand, c.VPNC.ConnectCommand, c.VPNC.ConfigFolder, c.VPNC.PIDFile, c.VPNC.WaitTimeAfterConnect,
-		c.WebUI.ServerPort, c.WebUI.IPEchoURL)
+		"IP Echo URL: %s\n"+
+		"Max age of IP: %s\n",
+		c.ConnectCommand, c.DisconnectCommand, c.ConfigFolder, c.WaitTimeAfterConnect,
+		c.ServerPort, c.IPEchoURL, c.MaxAgePublicIp)
+}
+
+func (c *Config) GetMaxAgePublicIpDuration() time.Duration {
+	duration, err := time.ParseDuration(c.MaxAgePublicIp)
+	if err != nil {
+		return 10 * time.Minute
+	}
+	return duration
 }
