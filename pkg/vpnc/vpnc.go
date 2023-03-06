@@ -32,7 +32,7 @@ func New(connectCommand string, disconnectCommand string,
 		configFolder:         configFolder,
 		waitTimeAfterConnect: waitTimeAfterConnect,
 		activeVpnConfig:      "",
-		messages:             "",
+		message:              "",
 		currentPublicIp:      ip,
 		lastUpdatePublicIp:   ipTime,
 		ipEchoUrl:            ipEchoUrl,
@@ -88,7 +88,7 @@ func (v *VPNC) Connect(vpncConfig string) error {
 	log.Infof("Connect to %s successful", vpncConfig)
 
 	v.activeVpnConfig = vpncConfig
-	v.messages = string(result)
+	v.message = string(result)
 	//Invalidate previous IP
 	v.resetIp()
 
@@ -110,7 +110,7 @@ func (v *VPNC) Disconnect() error {
 	// Invalidate previous IP
 	v.resetIp()
 	v.activeVpnConfig = ""
-	v.messages = string(result)
+	v.message = string(result)
 
 	return nil
 }
@@ -128,7 +128,7 @@ func (v *VPNC) Status() *VpnStatus {
 	return &VpnStatus{
 		CurrentPublicIp: v.currentPublicIp,
 		ActiveVpnConfig: v.activeVpnConfig,
-		Messages:        v.messages,
+		Message:         v.message,
 	}
 }
 

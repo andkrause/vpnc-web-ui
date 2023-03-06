@@ -82,7 +82,7 @@ func (ui *UI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vpncStatus := ui.vpnc.Status()
 
 	uiData.CommandResults =
-		addCommandResult(uiData.CommandResults, vpncStatus.Messages)
+		addCommandResult(uiData.CommandResults, vpncStatus.Message)
 
 	if vpncStatus.ActiveVpnConfig != "" {
 		uiData.ConnectionState = fmt.Sprintf("Connected to %q", vpncStatus.ActiveVpnConfig)
