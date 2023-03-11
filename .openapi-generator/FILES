@@ -1,0 +1,14 @@
+api/openapi.yaml
+gen/vpnapi/api.go
+gen/vpnapi/api_vpn_connection.go
+gen/vpnapi/api_vpn_gateway.go
+gen/vpnapi/error.go
+gen/vpnapi/helpers.go
+gen/vpnapi/impl.go
+gen/vpnapi/logger.go
+gen/vpnapi/model_connection_status.go
+gen/vpnapi/model_desired_connection_status.go
+gen/vpnapi/model_error.go
+gen/vpnapi/model_status.go
+gen/vpnapi/model_vpn_config.go
+gen/vpnapi/routers.go

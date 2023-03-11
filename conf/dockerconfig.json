@@ -1,13 +1,9 @@
 {
-    "vpnc": {
-        "connectCommand": "/usr/sbin/vpnc",
-        "disconnectCommand": "/usr/sbin/vpnc-disconnect",
-        "pidFile": "/var/run/vpnc.pid",
-        "configFolder": "/etc/vpnc/mountedconfig/",
-        "waitTimeAfterConnect": 1
-    },
-    "webUI": {
-        "serverPort": 80,
-        "ipEchoURL": "https://ipecho.net/plain"
-    }
+    "connectCommand": "/usr/sbin/vpnc",
+    "disconnectCommand": "/usr/sbin/vpnc-disconnect",
+    "configFolder": "/etc/vpnc/mountedconfig/",
+    "waitTimeAfterConnect": 1,
+    "serverPort": 80,
+    "ipEchoURL": "https://ipecho.net/plain",
+    "maxAgePublicIp": "2h"
 }
