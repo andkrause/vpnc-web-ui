@@ -4,6 +4,7 @@
 - [VPNC Web UI](#vpnc-web-ui)
   - [Table Of Contents](#table-of-contents)
   - [Configuration](#configuration)
+  - [REST API](#rest-api)
   - [Install](#install)
   - [Build](#build)
   - [Docker](#docker)
@@ -20,33 +21,40 @@ The default location is ./conf/config.json, howver this can be changed using the
 
 ```
 {
-    "vpnc": {
-        "connectCommand": "/usr/sbin/vpnc",
-        "disconnectCommand": "/usr/sbin/vpnc-disconnect",
-        "pidFile": "/var/run/vpnc.pid",
-        "configFolder": "/etc/vpnc/",
-        "waitTimeAfterConnect": 1
-    },
-    "webUI": {
-        "serverPort": 80,
-        "ipEchoURL": "https://ipecho.net/plain"
-    }
+    "connectCommand": "/usr/sbin/vpnc",
+    "disconnectCommand": "/usr/sbin/vpnc-disconnect",
+    "configFolder": "/etc/vpnc/",
+    "waitTimeAfterConnect": 1,
+    "serverPort": 80,
+    "ipEchoURL": "https://ipecho.net/plain",
+    "maxAgePublicIp": "2h"
 }
 ```
 
-|Section|Option|Definition|
-|-------|------|----------|
-|vpnc|connectCommand|Location of the vpnc command, can be found using `which vpnc`. This is the command executed when connect is selected|
-|vpnc|disconnectCommand|Location of the vpnc-disconnect command, can be found using `which vpnc-disconnect`. This is the command executed when disconnect is selected|
-|vpnc|pidFile|vpnc is started in background. to keep track a file containing the current process id is created. This file (its existence) is used to derrive the current connection state|
-|vpnc|configFolder|Folder where vpnc configs are searched|
-|vpnc|waitTimeAfterConnect|VPNC runs in background (concurrently). This wait time is used to "synchronize" the UI and the backround job. Nothing bad happens if synchronization is not perfect. However UI might display a wrong IP and or connection state|
-|webUI|serverPort|Port on which the UI is exposed. By default the server binds to all IPs/Hosts|
-|webUI|ipEchoURL|URL that is invoked to determine the own (server side) IP|
+|Option|Definition|
+|------|----------|
+|connectCommand|Location of the vpnc command, can be found using `which vpnc`. This is the command executed when connect is selected|
+|disconnectCommand|Location of the vpnc-disconnect command, can be found using `which vpnc-disconnect`. This is the command executed when disconnect is selected|
+|configFolder|Folder where vpnc configs are searched|
+waitTimeAfterConnect|VPNC runs in background (concurrently). This wait time is used to "synchronize" the UI and the backround job. Nothing bad happens if synchronization is not perfect. However UI might display a wrong IP and or connection state|
+|serverPort|Port on which the UI is exposed. By default the server binds to all IPs/Hosts|
+|ipEchoURL|URL that is invoked to determine the own (server side) IP|
+|maxAgePublicIp| To avoid asking for the public IP address too often it is cached. This parameter specifies the time after which the cache expires. Naturally connection chnages also expire the cache |
 
-The usi is rendered based on a web template. The template is located in `template/index.html`. If you dont like it, you can change it.
+The UI is rendered based on a web template. The template is located in `template/index.html`. If you dont like it, you can change it.
 
 Appearance is driven by the ccs locate in `static/formatting.css`. Again, if you don't like it, change it.
+
+## REST API
+
+To control the Gateway from Home Automation platforms like Home Assistant or openHAB there i a REST API included. This is documented in an [Open API](api/openapi.yaml) file. You can open it in the [swagger editor](https://editor.swagger.io) or any other tool that renders Open API specs.
+
+To regenerate the API spec the following tools are required:
+
+- [goimports](https://pkg.go.dev/golang.org/x/tools/cmd/goimports): to remove unneccessary imports from the generator
+- [OpenAPI Generator](https://openapi-generator.tech/): Generates a golang server from an Open API spec
+
+`make generate` executes the generation.
 
 ## Install
 
@@ -59,13 +67,7 @@ To start the server use and init-script. Samples are found in this [init scripts
 Since this is a "normal" golang application it requires a golang environment to be installed. It is then built using the following command:
 
 ```
-go build -o vpnc-web-ui  main.go 
-```
-
-To build for alternative OS/Platform like the Rasperrry Pi use:
-
-```
-GOOS=linux GOARCH=arm64 go build -o vpnc-web-ui-aarch64  main.go 
+make build
 ```
 
 ## Docker

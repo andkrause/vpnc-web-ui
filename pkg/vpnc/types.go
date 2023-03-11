@@ -16,7 +16,7 @@ type VPNC struct {
 }
 
 type VpnStatus struct {
-	CurrentPublicIp string `json:"currentPublicIp"`
-	ActiveVpnConfig string `json:"activeVpnConfig"`
-	Message         string `json:"message"`
+	CurrentPublicIp string
+	ActiveVpnConfig string
+	Message         string
 }

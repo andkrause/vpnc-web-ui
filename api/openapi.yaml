@@ -1,0 +1,231 @@
+openapi: 3.0.3
+info:
+  description: A REST compliant API to manage a VPN Gateway instance.
+  title: VPN Gateway API
+  version: "1.0"
+servers:
+- url: /
+tags:
+- description: VPN Gateway
+  name: vpn-gateway
+- description: VPN Gateway Connections
+  name: vpn-connection
+paths:
+  /api/v1/:
+    get:
+      description: Retrieve the overall status of the VPN Gateway.
+      operationId: overallStatus
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Server Error
+      summary: Get overall status
+      tags:
+      - vpn-gateway
+  /api/v1/connections:
+    get:
+      description: Retrieve the list of possible VPN Connections and their status.
+      operationId: listConnections
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/VPNConfig'
+                type: array
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Server Error
+      summary: Get list of Connections
+      tags:
+      - vpn-connection
+  /api/v1/connections/connection/{id}/:
+    get:
+      description: Read the status of a particular connection
+      operationId: readConnectionStatus
+      parameters:
+      - description: ID of a VPN Configuration that the gateway can connect to
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionStatus'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: VPN Connection not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Server Error
+      summary: Read connection status
+      tags:
+      - vpn-connection
+    post:
+      description: Set the desired state of a particular connection
+      operationId: setConnectionStatus
+      parameters:
+      - description: ID of a VPN Configuration that the gateway can connect to
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DesiredConnectionStatus'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionStatus'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: VPN COnnection not found
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Server Error
+      summary: Set connection status
+      tags:
+      - vpn-connection
+components:
+  schemas:
+    Status:
+      example:
+        currentPublicIp: 212.51.3.109
+        activeVpnConfig: home
+        message: Unable to connect to "home"
+      properties:
+        currentPublicIp:
+          description: Public IP that requests going through this gateway will have
+            as a source
+          example: 212.51.3.109
+          format: ipv4
+          title: Current Public IP
+          type: string
+        activeVpnConfig:
+          description: "Currently active VPN Configuration, blank if the VPN Gateway\
+            \ is not connected."
+          example: home
+          title: Active VPN configuration
+          type: string
+        message:
+          description: Messages (success and error) coming from vpn client
+          example: Unable to connect to "home"
+          title: Message
+          type: string
+      required:
+      - activeVpnConfig
+      - currentPublicIp
+      - message
+      title: Status
+      type: object
+    VPNConfig:
+      example:
+        name: home
+        id: home
+        status:
+          isActive: true
+      properties:
+        id:
+          description: ID of a VPN Configuration that the gateway can connect to
+          example: home
+          title: VPN Configuration Identifier
+          type: string
+        name:
+          description: Human readable name of a VPN Configuration that the gateway
+            can connect to
+          example: home
+          title: VPN Configuration Name
+          type: string
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+      title: VPN configuration
+      type: object
+    ConnectionStatus:
+      example:
+        isActive: true
+      properties:
+        isActive:
+          description: Indicates whether a specific connection is currently active
+            or not
+          title: Is the connection Active?
+          type: boolean
+      required:
+      - isActive
+      title: VPN Connection Status
+      type: object
+    DesiredConnectionStatus:
+      example:
+        desiredConnectionState: active
+      properties:
+        desiredConnectionState:
+          description: Indicates whether a specific should be active or not
+          enum:
+          - active
+          - inactive
+          title: Desired Connection State
+          type: string
+      title: Desired Connection State
+      type: object
+    Error:
+      description: Generic Error
+      properties:
+        code:
+          description: Code uniquely identifying the error type
+          example: connectionError
+          title: Error Code
+          type: string
+        message:
+          description: Message describing the error
+          example: Unable to connect to "home"
+          title: Error Message
+          type: string
+      title: Error
+      type: object

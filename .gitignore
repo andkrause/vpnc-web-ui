@@ -5,3 +5,5 @@ vpnc-web-ui-*
 localconfig.json
 conf/*.conf
 releases
+__debug_bin
+vpnc-web-ui 

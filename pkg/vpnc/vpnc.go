@@ -40,6 +40,13 @@ func New(connectCommand string, disconnectCommand string,
 	}
 }
 
+func (v *VPNC) ConfigurationExists(configurationName string) bool {
+	if _, err := os.Stat(filepath.Join(v.configFolder, fmt.Sprintf("%s.conf", configurationName))); err != nil {
+		return false
+	}
+	return true
+}
+
 func (v *VPNC) ConfigurationList() ([]string, error) {
 	files, err := os.ReadDir(v.configFolder)
 	if err != nil {
@@ -100,7 +107,7 @@ func (v *VPNC) Disconnect() error {
 
 	cmd := exec.Command(v.disconnectCommand)
 	result, err := cmd.Output()
-	if err != nil {
+	if err != nil && v.activeVpnConfig != "" { // avoid sending disconnect errors when already disconnected
 		log.Errorf("error executing vpnc disconnect command (%s): %s",
 			v.connectCommand, err.Error())
 		return fmt.Errorf("error executing vpnc connect command (%s): %s",

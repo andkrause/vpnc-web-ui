@@ -24,7 +24,7 @@ type UI struct {
 	vpnc     *vpnc.VPNC
 }
 
-func New(vpnc *vpnc.VPNC, ipEchoUrl string) (*UI, error) {
+func New(vpnc *vpnc.VPNC) (*UI, error) {
 	tmpl, err := template.ParseFiles(TEMPLATE_LOCATION)
 	if err != nil {
 		log.Errorf("error parsing template (%s): %s", TEMPLATE_LOCATION, err.Error())

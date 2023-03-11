@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 
-	"github.com/andkrause/vpnc-web-ui/pkg/vpnc"
-
+	"github.com/andkrause/vpnc-web-ui/gen/vpnapi"
+	"github.com/andkrause/vpnc-web-ui/pkg/api"
 	"github.com/andkrause/vpnc-web-ui/pkg/config"
+	"github.com/andkrause/vpnc-web-ui/pkg/vpnc"
 	"github.com/andkrause/vpnc-web-ui/pkg/web"
 	log "github.com/sirupsen/logrus"
 )
@@ -35,20 +35,35 @@ func main() {
 		serverConfig.IPEchoURL, serverConfig.GetMaxAgePublicIpDuration())
 
 	//Serve UI
-	ui, err := web.New(vpncClient, serverConfig.IPEchoURL)
+	ui, err := web.New(vpncClient)
 	if err != nil {
 		log.Error(err.Error())
 		os.Exit(2)
 	}
 
-	http.Handle("/", ui)
+	//API stuff
+
+	//Implementation
+	services := api.New(vpncClient)
+
+	//Controllers
+	vpnConnectionApi := vpnapi.NewVpnConnectionApiController(services)
+	vpnGatewayApi := vpnapi.NewVpnGatewayApiController(services)
+
+	//API Router
+	router := vpnapi.NewRouter(vpnConnectionApi, vpnGatewayApi)
 
 	// Serve static stuff
 	staticFileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix(strings.TrimRight("/static/", "/"), staticFileServer))
+	router.Handle("/static/", staticFileServer)
+
+	router.Handle("/", ui)
+
+	//http.Handle("/static/", http.StripPrefix(strings.TrimRight("/static/", "/"), staticFileServer))
 
 	server := http.Server{
-		Addr: fmt.Sprintf(":%d", serverConfig.ServerPort),
+		Addr:    fmt.Sprintf(":%d", serverConfig.ServerPort),
+		Handler: router,
 	}
 
 	fmt.Println("Starting server with config:")

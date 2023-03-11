@@ -1,10 +1,11 @@
 ## Build
-FROM golang:1.19.5-alpine3.17 AS go-builder
+FROM golang:1.20.0-alpine3.17 AS go-builder
 
 WORKDIR /app
 
 COPY go.mod ./
 COPY pkg/ pkg/
+COPY gen/ gen/
 RUN go mod download
 
 COPY main.go ./
