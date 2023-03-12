@@ -1,6 +1,9 @@
 package vpnc
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 type VPNC struct {
 	connectCommand       string
@@ -13,6 +16,7 @@ type VPNC struct {
 	message              string
 	ipEchoUrl            string
 	maxAgePublicIp       time.Duration
+	mu                   sync.Mutex
 }
 
 type VpnStatus struct {

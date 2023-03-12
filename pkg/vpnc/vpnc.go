@@ -80,9 +80,11 @@ func (v *VPNC) ConfigurationList() ([]string, error) {
 }
 
 func (v *VPNC) Connect(vpncConfig string) error {
-
 	// Always make sure you are disconnected error can be ignored ;-)
 	v.Disconnect()
+
+	v.mu.Lock()
+	defer v.mu.Unlock()
 
 	cmd := exec.Command(v.connectCommand, fmt.Sprintf("%s%s", v.configFolder, vpncConfig))
 
@@ -105,6 +107,9 @@ func (v *VPNC) Connect(vpncConfig string) error {
 }
 
 func (v *VPNC) Disconnect() error {
+
+	v.mu.Lock()
+	defer v.mu.Unlock()
 
 	cmd := exec.Command(v.disconnectCommand)
 	result, err := cmd.Output()
