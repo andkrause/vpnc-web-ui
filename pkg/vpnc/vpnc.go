@@ -3,6 +3,7 @@ package vpnc
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"net/http"
 	"os"
@@ -95,7 +96,7 @@ func (v *VPNC) Connect(vpncConfig string) error {
 	log.Infof("Connect to %s successful", vpncConfig)
 
 	v.activeVpnConfig = vpncConfig
-	v.message = string(result)
+	v.message = strings.TrimSuffix(string(result), "\n")
 	//Invalidate previous IP
 	v.resetIp()
 
@@ -117,7 +118,7 @@ func (v *VPNC) Disconnect() error {
 	// Invalidate previous IP
 	v.resetIp()
 	v.activeVpnConfig = ""
-	v.message = string(result)
+	v.message = strings.TrimSuffix(string(result), "\n")
 
 	return nil
 }
