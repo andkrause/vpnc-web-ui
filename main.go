@@ -55,13 +55,14 @@ func main() {
 	router := vpnapi.NewRouter(vpnConnectionApi, vpnGatewayApi)
 
 	// Serve static stuff
-	staticFileServer := http.FileServer(http.Dir("./static"))
+	staticFileServer := http.FileServer(http.Dir("static"))
 	router.Handle("/static/", http.StripPrefix(strings.TrimRight("/static/", "/"), staticFileServer))
 
 	router.Handle("/", ui)
 
 	server := http.Server{
-		Addr:    fmt.Sprintf(":%d", serverConfig.ServerPort),
+		Addr: fmt.Sprintf(":%d", serverConfig.ServerPort),
+
 		Handler: router,
 	}
 
