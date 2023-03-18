@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/andkrause/vpnc-web-ui/gen/vpnapi"
 	"github.com/andkrause/vpnc-web-ui/pkg/api"
@@ -55,11 +56,9 @@ func main() {
 
 	// Serve static stuff
 	staticFileServer := http.FileServer(http.Dir("./static"))
-	router.Handle("/static/", staticFileServer)
+	router.Handle("/static/", http.StripPrefix(strings.TrimRight("/static/", "/"), staticFileServer))
 
 	router.Handle("/", ui)
-
-	//http.Handle("/static/", http.StripPrefix(strings.TrimRight("/static/", "/"), staticFileServer))
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", serverConfig.ServerPort),
