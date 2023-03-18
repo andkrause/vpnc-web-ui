@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/andkrause/vpnc-web-ui/gen/vpnapi"
 	"github.com/andkrause/vpnc-web-ui/pkg/api"
@@ -54,15 +53,14 @@ func main() {
 	//API Router
 	router := vpnapi.NewRouter(vpnConnectionApi, vpnGatewayApi)
 
-	// Serve static stuff
-	staticFileServer := http.FileServer(http.Dir("static"))
-	router.Handle("/static/", http.StripPrefix(strings.TrimRight("/static/", "/"), staticFileServer))
-
+	//UI Handler
 	router.Handle("/", ui)
 
-	server := http.Server{
-		Addr: fmt.Sprintf(":%d", serverConfig.ServerPort),
+	// Serve static stuff
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("./static"))))
 
+	server := http.Server{
+		Addr:    fmt.Sprintf(":%d", serverConfig.ServerPort),
 		Handler: router,
 	}
 
