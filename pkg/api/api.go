@@ -6,28 +6,29 @@ import (
 	"net/http"
 
 	"github.com/andkrause/vpnc-web-ui/gen/vpnapi"
-	"github.com/andkrause/vpnc-web-ui/pkg/vpnc"
+	"github.com/andkrause/vpnc-web-ui/pkg/vpnclient"
 )
 
 // VpnConnectionApiService is a service that implements the logic for the VpnConnectionApiServicer
 // This service should implement the business logic for every endpoint for the VpnConnectionApi API.
 // Include any external packages or services that will be required by this service.
 type ApiService struct {
-	vpnc *vpnc.VPNC
+	vpnClientAggregator *vpnclient.VpnClientAggregator
 }
 
 // NewVpnConnectionApiService creates a default api service
-func New(vpnc *vpnc.VPNC) *ApiService {
+func New(vpnClientAggregator *vpnclient.VpnClientAggregator) *ApiService {
 	return &ApiService{
-		vpnc: vpnc,
+		vpnClientAggregator: vpnClientAggregator,
 	}
 }
 
 func (s *ApiService) OverallStatus(ctx context.Context) (vpnapi.ImplResponse, error) {
-	vpnStatus := s.vpnc.Status()
+	vpnStatus := s.vpnClientAggregator.Status()
 
 	return vpnapi.Response(http.StatusOK, vpnapi.Status{
 		CurrentPublicIp: vpnStatus.CurrentPublicIp,
+		ActiveVpnClient: vpnStatus.ActiveVpnClient,
 		ActiveVpnConfig: vpnStatus.ActiveVpnConfig,
 		Message:         vpnStatus.Message,
 	}), nil
@@ -35,7 +36,7 @@ func (s *ApiService) OverallStatus(ctx context.Context) (vpnapi.ImplResponse, er
 
 // ListConnections - Get list of Connections
 func (s *ApiService) ListConnections(ctx context.Context) (vpnapi.ImplResponse, error) {
-	configurations, err := s.vpnc.ConfigurationList()
+	configurations, err := s.vpnClientAggregator.ConfigurationList()
 	if err != nil {
 		return vpnapi.Response(http.StatusBadRequest, vpnapi.Error{
 			Message: fmt.Sprintf("Error reading available connections: %s", err.Error()),
@@ -43,21 +44,25 @@ func (s *ApiService) ListConnections(ctx context.Context) (vpnapi.ImplResponse, 
 		}), nil
 	}
 
-	vpnStatus := s.vpnc.Status()
+	vpnStatus := s.vpnClientAggregator.Status()
 
-	response := make([]vpnapi.VpnConfig, len(configurations))
+	var response []vpnapi.VpnConfig
+	for _, vpnClientConfigs := range configurations {
+		for _, config := range vpnClientConfigs.AvailableVpnConfigs {
 
-	for i, conf := range configurations {
+			currentConfig := vpnapi.VpnConfig{
+				Id:            config,
+				VpnClientName: vpnClientConfigs.VpnClientName,
+				ConfigName:    config,
+			}
 
-		response[i] = vpnapi.VpnConfig{
-			Id:   conf,
-			Name: conf,
-		}
-
-		if conf == vpnStatus.ActiveVpnConfig {
-			response[i].Status = vpnapi.ConnectionStatus{IsActive: true}
-		} else {
-			response[i].Status = vpnapi.ConnectionStatus{IsActive: false}
+			if vpnStatus.ActiveVpnClient == vpnClientConfigs.VpnClientName &&
+				vpnStatus.ActiveVpnConfig == config {
+				currentConfig.Status = vpnapi.ConnectionStatus{IsActive: true}
+			} else {
+				currentConfig.Status = vpnapi.ConnectionStatus{IsActive: false}
+			}
+			response = append(response, currentConfig)
 		}
 	}
 
@@ -65,16 +70,18 @@ func (s *ApiService) ListConnections(ctx context.Context) (vpnapi.ImplResponse, 
 }
 
 // ReadConnectionStatus - Read connection status
-func (s *ApiService) ReadConnectionStatus(ctx context.Context, id string) (vpnapi.ImplResponse, error) {
+func (s *ApiService) ReadConnectionStatus(ctx context.Context, id string, client string) (vpnapi.ImplResponse, error) {
 
-	if !s.vpnc.ConfigurationExists(id) {
+	if !s.vpnClientAggregator.ConfigurationExists(client, id) {
 		return vpnapi.Response(http.StatusNotFound, vpnapi.Error{
 			Message: fmt.Sprintf("VPN configuration %q does not exist", id),
 			Code:    "connectionNotFound",
 		}), nil
 	}
 
-	if s.vpnc.Status().ActiveVpnConfig == id {
+	status := s.vpnClientAggregator.Status()
+
+	if status.ActiveVpnConfig == id && status.ActiveVpnClient == client {
 		return vpnapi.Response(http.StatusOK, vpnapi.ConnectionStatus{
 			IsActive: true,
 		}), nil
@@ -86,9 +93,9 @@ func (s *ApiService) ReadConnectionStatus(ctx context.Context, id string) (vpnap
 }
 
 // SetConnectionStatus - Set connection status
-func (s *ApiService) SetConnectionStatus(ctx context.Context, id string, desiredConnectionStatus vpnapi.DesiredConnectionStatus) (vpnapi.ImplResponse, error) {
+func (s *ApiService) SetConnectionStatus(ctx context.Context, id string, client string, desiredConnectionStatus vpnapi.DesiredConnectionStatus) (vpnapi.ImplResponse, error) {
 
-	if !s.vpnc.ConfigurationExists(id) {
+	if !s.vpnClientAggregator.ConfigurationExists(client, id) {
 		return vpnapi.Response(http.StatusNotFound, vpnapi.Error{
 			Message: fmt.Sprintf("VPN configuration %q does not exist", id),
 			Code:    "connectionNotFound",
@@ -96,7 +103,8 @@ func (s *ApiService) SetConnectionStatus(ctx context.Context, id string, desired
 	}
 
 	if desiredConnectionStatus.DesiredConnectionState == "active" {
-		if err := s.vpnc.Connect(id); err != nil {
+
+		if err := s.vpnClientAggregator.Connect(client, id); err != nil {
 			return vpnapi.Response(http.StatusNotFound, vpnapi.Error{
 				Message: fmt.Sprintf("Error establishing VPN connection: %s", err.Error()),
 				Code:    "connectionError",
@@ -106,7 +114,8 @@ func (s *ApiService) SetConnectionStatus(ctx context.Context, id string, desired
 			IsActive: true,
 		}), nil
 	} else {
-		if err := s.vpnc.Disconnect(); err != nil {
+
+		if _, err := s.vpnClientAggregator.Disconnect(); err != nil {
 			return vpnapi.Response(http.StatusNotFound, vpnapi.Error{
 				Message: fmt.Sprintf("Error disconnecting VPN connection: %s", err.Error()),
 				Code:    "disconnectingError",

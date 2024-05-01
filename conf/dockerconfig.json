@@ -1,9 +1,18 @@
 {
-    "connectCommand": "/usr/sbin/vpnc",
-    "disconnectCommand": "/usr/sbin/vpnc-disconnect",
-    "configFolder": "/etc/vpnc/mountedconfig/",
     "waitTimeAfterConnect": 1,
     "serverPort": 80,
     "ipEchoURL": "https://ipecho.net/plain",
-    "maxAgePublicIp": "2h"
+    "maxAgePublicIp": "2h",
+    "vpnc": {
+        "connectCommand": "/usr/sbin/vpnc",
+        "disconnectCommand": "/usr/sbin/vpnc-disconnect",
+        "configFolder": "/var/vpnc/mountedconfig/",
+        "vpncNetworkInterfaceName": "tun0"
+    },
+    "wireguard": {
+        "wgQuickCommand": "/usr/bin/wg-quick",
+        "configFolder": "/var/wireguard/mountedconfig/",
+        "wireguardNetworkInterfaceName": "wg0",
+        "wgQuickConfigSearchDir": "/etc/wireguard/"
+    }
 }

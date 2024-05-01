@@ -53,7 +53,7 @@ paths:
       summary: Get list of Connections
       tags:
       - vpn-connection
-  /api/v1/connections/connection/{id}/:
+  /api/v1/connections/connection/{client}/{id}/:
     get:
       description: Read the status of a particular connection
       operationId: readConnectionStatus
@@ -62,6 +62,14 @@ paths:
         explode: false
         in: path
         name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: ID of a VPN Client that the gateway can connect to
+        explode: false
+        in: path
+        name: client
         required: true
         schema:
           type: string
@@ -96,6 +104,14 @@ paths:
         explode: false
         in: path
         name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: ID of a VPN Client that the gateway can connect to
+        explode: false
+        in: path
+        name: client
         required: true
         schema:
           type: string
@@ -139,6 +155,7 @@ components:
     Status:
       example:
         currentPublicIp: 212.51.3.109
+        activeVpnClient: wireguard
         activeVpnConfig: home
         message: Unable to connect to "home"
       properties:
@@ -148,6 +165,12 @@ components:
           example: 212.51.3.109
           format: ipv4
           title: Current Public IP
+          type: string
+        activeVpnClient:
+          description: "Currently active VPN Client, blank if the VPN Gateway is not\
+            \ connected."
+          example: wireguard
+          title: Active VPN client
           type: string
         activeVpnConfig:
           description: "Currently active VPN Configuration, blank if the VPN Gateway\
@@ -161,6 +184,7 @@ components:
           title: Message
           type: string
       required:
+      - activeVpnClient
       - activeVpnConfig
       - currentPublicIp
       - message
@@ -170,6 +194,7 @@ components:
       example:
         name: home
         id: home
+        vpnClientName: wireguard
         status:
           isActive: true
       properties:
@@ -178,7 +203,12 @@ components:
           example: home
           title: VPN Configuration Identifier
           type: string
-        name:
+        vpnClientName:
+          description: Name of the VPN Client
+          example: Wireguard
+          title: VPN Client Name
+          type: string
+        configName:
           description: Human readable name of a VPN Configuration that the gateway
             can connect to
           example: home
@@ -186,6 +216,11 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/ConnectionStatus'
+      required:
+      - configName
+      - id
+      - status
+      - vpnClientName
       title: VPN configuration
       type: object
     ConnectionStatus:
@@ -216,6 +251,9 @@ components:
       type: object
     Error:
       description: Generic Error
+      example:
+        code: connectionError
+        message: Unable to connect to "home"
       properties:
         code:
           description: Code uniquely identifying the error type

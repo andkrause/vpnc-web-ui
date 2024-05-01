@@ -1,5 +1,5 @@
 ## Build
-FROM golang:1.20.0-alpine3.17 AS go-builder
+FROM golang:1.22.2-alpine3.19 AS go-builder
 
 WORKDIR /app
 
@@ -13,12 +13,15 @@ COPY main.go ./
 RUN go mod tidy && go build -o /vpnc-web-ui main.go
 
 ## Deploy
-FROM alpine:3.17
+FROM alpine:3.19
 
-ENV VPN_INTERFACE=tun0
+ENV VPNC_INTERFACE=tun0
+ENV WIREGUARD_INTERFACE=wg0
 ENV LAN_INTERFACE=eth0
 
-RUN apk add --no-cache vpnc iptables
+# important to remove sysctl reference. this needs to be set on docker run command
+RUN apk add --no-cache vpnc iptables wireguard-tools \
+    && sed -i 's|\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1|[[ $proto == -4 ]] \&\& [[ $(sysctl -n net.ipv4.conf.all.src_valid_mark) != 1 ]] \&\& cmd sysctl -q net.ipv4.conf.all.src_valid_mark=1|' /usr/bin/wg-quick
 
 WORKDIR /app
 

@@ -7,3 +7,6 @@ conf/*.conf
 releases
 __debug_bin
 vpnc-web-ui 
+docker-compose.yml
+docker-compose.yaml
+devconfig/** 

@@ -10,7 +10,9 @@ import (
 	"github.com/andkrause/vpnc-web-ui/pkg/api"
 	"github.com/andkrause/vpnc-web-ui/pkg/config"
 	"github.com/andkrause/vpnc-web-ui/pkg/vpnc"
+	"github.com/andkrause/vpnc-web-ui/pkg/vpnclient"
 	"github.com/andkrause/vpnc-web-ui/pkg/web"
+	wgquick "github.com/andkrause/vpnc-web-ui/pkg/wg-quick"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,16 +28,44 @@ func main() {
 
 	serverConfig, err := config.ParseConfigFile(configFilePath)
 	if err != nil {
-		log.Error(err.Error())
-		os.Exit(2)
+		log.Fatal(err.Error())
 	}
 
-	vpncClient := vpnc.New(serverConfig.ConnectCommand, serverConfig.DisconnectCommand,
-		serverConfig.ConfigFolder, serverConfig.WaitTimeAfterConnect,
-		serverConfig.IPEchoURL, serverConfig.GetMaxAgePublicIpDuration())
+	if err := serverConfig.Validate(); err != nil {
+		log.Fatalf("Invalid configuration in %q: %s", configFilePath, err)
+	}
+
+	vpnContainer := []*vpnclient.VpnClientContainer{}
+
+	if serverConfig.IsVpncConfigured() {
+
+		vpncClient := &vpnclient.VpnClientContainer{
+			Name: "vpnc",
+			Client: vpnc.New(serverConfig.Vpnc.ConnectCommand, serverConfig.Vpnc.DisconnectCommand,
+				serverConfig.Vpnc.ConfigFolder, serverConfig.Vpnc.VpncNetworkInterfaceName),
+		}
+
+		vpnContainer = append(vpnContainer, vpncClient)
+	}
+
+	if serverConfig.IsWireguardConfigured() {
+		wireguardClient := &vpnclient.VpnClientContainer{
+			Name: "wireguard",
+			Client: wgquick.New(serverConfig.Wireguard.WgQuickCommand, serverConfig.Wireguard.ConfigFolder,
+				serverConfig.Wireguard.WireguardNetworkInterfaceName,
+				serverConfig.Wireguard.WgQuickConfigSearchDir),
+		}
+
+		vpnContainer = append(vpnContainer, wireguardClient)
+
+	}
+
+	vpnAggregator := vpnclient.New(serverConfig.WaitTimeAfterConnect,
+		serverConfig.IPEchoURL, serverConfig.GetMaxAgePublicIpDuration(), vpnContainer...,
+	)
 
 	//Serve UI
-	ui, err := web.New(vpncClient)
+	ui, err := web.New(vpnAggregator)
 	if err != nil {
 		log.Error(err.Error())
 		os.Exit(2)
@@ -44,11 +74,11 @@ func main() {
 	//API stuff
 
 	//Implementation
-	services := api.New(vpncClient)
+	services := api.New(vpnAggregator)
 
 	//Controllers
-	vpnConnectionApi := vpnapi.NewVpnConnectionApiController(services)
-	vpnGatewayApi := vpnapi.NewVpnGatewayApiController(services)
+	vpnConnectionApi := vpnapi.NewVpnConnectionAPIController(services)
+	vpnGatewayApi := vpnapi.NewVpnGatewayAPIController(services)
 
 	//API Router
 	router := vpnapi.NewRouter(vpnConnectionApi, vpnGatewayApi)

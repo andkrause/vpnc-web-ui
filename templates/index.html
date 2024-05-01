@@ -24,10 +24,10 @@
                      
 
                         <form method="POST">
-                                {{range .ConfigurationList}}
+                                {{range .VpnConfigurationList}}
                                         <p>
-                                                <input type="radio" id="{{.}}" name="vpnconfig" value="{{.}}"/><label
-                                                        for="{{.}}">{{.}}</label>
+                                                <input type="radio" id="{{.}}" name="vpnconfig" value="{{.VpnClientName}}#{{.VpnConfigurationName}}"/><label
+                                                        for="{{.}}">{{.VpnClientName}} {{.VpnConfigurationName}}</label>
                                         </p>
                                 {{end}}
                                 <p>
