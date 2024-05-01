@@ -84,8 +84,13 @@ func (ui *UI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				uiData.CommandResults =
 					addCommandResult(uiData.CommandResults, fmt.Sprintf("error disconnecting: %s", err))
 			} else {
-				uiData.CommandResults = addCommandResult(uiData.CommandResults,
-					fmt.Sprintf("success: %s", message))
+				if len(message) > 0 {
+					uiData.CommandResults = addCommandResult(uiData.CommandResults,
+						fmt.Sprintf("success: %s", message))
+				} else {
+					uiData.CommandResults = addCommandResult(uiData.CommandResults,
+						"successfully disconnected")
+				}
 			}
 
 		} else if vpnconfig != "" {
@@ -111,8 +116,10 @@ func (ui *UI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	vpnStatus := ui.vpnClientAggregator.Status()
 
-	uiData.CommandResults =
-		addCommandResult(uiData.CommandResults, vpnStatus.Message)
+	if len(vpnStatus.Message) > 0 {
+		uiData.CommandResults =
+			addCommandResult(uiData.CommandResults, vpnStatus.Message)
+	}
 
 	if vpnStatus.ActiveVpnConfig != "" {
 		uiData.ConnectionState = fmt.Sprintf("Connected to \"%s %s\"", vpnStatus.ActiveVpnClient, vpnStatus.ActiveVpnConfig)
