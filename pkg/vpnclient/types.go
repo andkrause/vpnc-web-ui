@@ -30,9 +30,9 @@ type VpnClientContainer struct {
 	Name   string
 }
 
-type VpnConfigurations struct {
-	VpnClientName       string
-	AvailableVpnConfigs []string
+type VpnConfiguration struct {
+	VpnClientName        string
+	VPNConfigurationName string
 }
 
 type VpnStatus struct {

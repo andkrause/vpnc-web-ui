@@ -46,23 +46,19 @@ func (s *ApiService) ListConnections(ctx context.Context) (vpnapi.ImplResponse, 
 
 	vpnStatus := s.vpnClientAggregator.Status()
 
-	var response []vpnapi.VpnConfig
-	for _, vpnClientConfigs := range configurations {
-		for _, config := range vpnClientConfigs.AvailableVpnConfigs {
+	response := make([]vpnapi.VpnConfig, len(configurations))
 
-			currentConfig := vpnapi.VpnConfig{
-				Id:            config,
-				VpnClientName: vpnClientConfigs.VpnClientName,
-				ConfigName:    config,
-			}
-
-			if vpnStatus.ActiveVpnClient == vpnClientConfigs.VpnClientName &&
-				vpnStatus.ActiveVpnConfig == config {
-				currentConfig.Status = vpnapi.ConnectionStatus{IsActive: true}
-			} else {
-				currentConfig.Status = vpnapi.ConnectionStatus{IsActive: false}
-			}
-			response = append(response, currentConfig)
+	for i := range configurations {
+		response[i] = vpnapi.VpnConfig{
+			Id:            configurations[i].VpnClientName + configurations[i].VPNConfigurationName,
+			VpnClientName: configurations[i].VpnClientName,
+			ConfigName:    configurations[i].VPNConfigurationName,
+		}
+		if vpnStatus.ActiveVpnClient == configurations[i].VpnClientName &&
+			vpnStatus.ActiveVpnConfig == configurations[i].VPNConfigurationName {
+			response[i].Status = vpnapi.ConnectionStatus{IsActive: true}
+		} else {
+			response[i].Status = vpnapi.ConnectionStatus{IsActive: false}
 		}
 	}
 
@@ -115,7 +111,7 @@ func (s *ApiService) SetConnectionStatus(ctx context.Context, id string, client 
 		}), nil
 	} else {
 
-		if _, err := s.vpnClientAggregator.Disconnect(); err != nil {
+		if err := s.vpnClientAggregator.Disconnect(); err != nil {
 			return vpnapi.Response(http.StatusNotFound, vpnapi.Error{
 				Message: fmt.Sprintf("Error disconnecting VPN connection: %s", err.Error()),
 				Code:    "disconnectingError",

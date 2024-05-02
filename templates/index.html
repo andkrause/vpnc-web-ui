@@ -19,16 +19,17 @@
                 <div class="article">
                         <h2>VPN Setup</h2>
 
-                        
+
                         <p>Current Status: {{.ConnectionState}}</p>
-                     
+
 
                         <form method="POST">
                                 {{range .VpnConfigurationList}}
-                                        <p>
-                                                <input type="radio" id="{{.}}" name="vpnconfig" value="{{.VpnClientName}}#{{.VpnConfigurationName}}"/><label
-                                                        for="{{.}}">{{.VpnClientName}} {{.VpnConfigurationName}}</label>
-                                        </p>
+                                <p>
+                                        <input type="radio" id="{{.}}" name="vpnconfig"
+                                                value="{{.VpnClientName}}#{{.VpnConfigurationName}}" /><label
+                                                for="{{.}}">{{.VpnClientName}} {{.VpnConfigurationName}}</label>
+                                </p>
                                 {{end}}
                                 <p>
                                         <input type="radio" id="disconnect" name="vpnconfig" value="disconnect" /><label
@@ -47,11 +48,13 @@
                 {{if .CommandResults}}
                 <div class="article">
                         <h2>Result</h2>
-                        <ul>
-                                {{range .CommandResults}}
-                                        <li>Message: {{.}}</li>
-                                {{end}}
-                        </ul>
+
+                        {{range .CommandResults}}
+                        <div class="message">
+                                <pre>{{.}}</pre>
+                        </div>
+                        {{end}}
+
                 </div>
                 {{end}}
 

@@ -60,15 +60,10 @@ func (ui *UI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			addCommandResult(uiData.CommandResults, fmt.Sprintf("Error getting configurations: %s", err))
 	}
 
-	for _, vpnClienConfigs := range vpnConfigList {
-		configArray := make([]uiVpnConfig, len(vpnClienConfigs.AvailableVpnConfigs))
-		for i, vpnClientConfigName := range vpnClienConfigs.AvailableVpnConfigs {
-			configArray[i] = uiVpnConfig{
-				VpnClientName:        vpnClienConfigs.VpnClientName,
-				VpnConfigurationName: vpnClientConfigName,
-			}
-		}
-		uiData.VpnConfigurationList = append(uiData.VpnConfigurationList, configArray...)
+	uiData.VpnConfigurationList = make([]uiVpnConfig, len(vpnConfigList))
+
+	for i := range vpnConfigList {
+		uiData.VpnConfigurationList[i] = uiVpnConfig{VpnClientName: vpnConfigList[i].VpnClientName, VpnConfigurationName: vpnConfigList[i].VPNConfigurationName}
 	}
 
 	// There is stuff to do
@@ -79,18 +74,14 @@ func (ui *UI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		vpnconfig := r.Form.Get("vpnconfig")
 		if vpnconfig == "disconnect" {
 
-			if message, err := ui.vpnClientAggregator.Disconnect(); err != nil {
+			if err := ui.vpnClientAggregator.Disconnect(); err != nil {
 				log.Errorf("error disconnecting: %s", err)
 				uiData.CommandResults =
 					addCommandResult(uiData.CommandResults, fmt.Sprintf("error disconnecting: %s", err))
 			} else {
-				if len(message) > 0 {
-					uiData.CommandResults = addCommandResult(uiData.CommandResults,
-						fmt.Sprintf("success: %s", message))
-				} else {
-					uiData.CommandResults = addCommandResult(uiData.CommandResults,
-						"successfully disconnected")
-				}
+				uiData.CommandResults = addCommandResult(uiData.CommandResults,
+					"successfully disconnected")
+
 			}
 
 		} else if vpnconfig != "" {
@@ -102,12 +93,13 @@ func (ui *UI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					addCommandResult(uiData.CommandResults,
 						fmt.Sprintf("vpnconfig name %q unexpected, use \"#\" as a delimiter", vpnconfig))
 			} else {
-
 				if err := ui.vpnClientAggregator.Connect(vpnConfigArray[0], vpnConfigArray[1]); err != nil {
 					log.Errorf("error connecting through vpn client %q: %s", vpnConfigArray[0], err)
 					uiData.CommandResults =
 						addCommandResult(uiData.CommandResults,
 							fmt.Sprintf("error connecting through vpn client %q: %s", vpnConfigArray[0], err))
+
+				} else {
 
 				}
 			}

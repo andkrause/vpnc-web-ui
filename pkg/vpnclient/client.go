@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sort"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -66,32 +67,44 @@ func (v *VpnClientAggregator) ConfigurationExists(clientName string, configurati
 	return false
 }
 
-func (v *VpnClientAggregator) ConfigurationList() ([]VpnConfigurations, error) {
-	configs := make([]VpnConfigurations, len(v.clients))
+func (v *VpnClientAggregator) ConfigurationList() ([]VpnConfiguration, error) {
+
+	vpnClientsKeys := make([]string, len(v.clients))
 
 	i := 0
-
-	var err error
-	for clientName, client := range v.clients {
-		configs[i].VpnClientName = clientName
-		configs[i].AvailableVpnConfigs, err = client.ConfigurationList()
-		if err != nil {
-			log.Errorf("error reading vpn configs for client %s: %s", clientName, err.Error())
-			return nil, fmt.Errorf("error reading vpn configs for client %s: %s", clientName, err.Error())
-		}
+	for key := range v.clients {
+		vpnClientsKeys[i] = key
 		i++
 	}
 
-	return configs, nil
+	sort.Strings(vpnClientsKeys)
 
+	result := []VpnConfiguration{}
+
+	for i := range vpnClientsKeys {
+		configs, err := v.clients[vpnClientsKeys[i]].ConfigurationList()
+		if err != nil {
+			log.Errorf("error reading vpn configs for client %s: %s", vpnClientsKeys[i], err.Error())
+			return nil, fmt.Errorf("error reading vpn configs for client %s: %s", vpnClientsKeys[i], err.Error())
+		}
+		sort.Strings(configs)
+
+		for j := range configs {
+			result = append(result, VpnConfiguration{
+				VpnClientName:        vpnClientsKeys[i],
+				VPNConfigurationName: configs[j],
+			})
+		}
+	}
+	return result, nil
 }
 
 func (v *VpnClientAggregator) Connect(clientName string, configurationName string) error {
-	// Always make sure you are disconnected error can be ignored ;-)
-	v.Disconnect()
-
 	v.mu.Lock()
 	defer v.mu.Unlock()
+
+	// Always make sure you are disconnected error can be ignored ;-)
+	v.disconnectInternal()
 
 	client, ok := v.clients[clientName]
 	if !ok {
@@ -116,9 +129,7 @@ func (v *VpnClientAggregator) Connect(clientName string, configurationName strin
 	return nil
 }
 
-func (v *VpnClientAggregator) Disconnect() (string, error) {
-	v.mu.Lock()
-	defer v.mu.Unlock()
+func (v *VpnClientAggregator) disconnectInternal() (string, error) {
 
 	var returnMessage string
 	var returnError error
@@ -136,16 +147,26 @@ func (v *VpnClientAggregator) Disconnect() (string, error) {
 				log.Error(returnError)
 			}
 			returnMessage = message
-
-			v.activeVpnClient = ""
-			v.activeVpnConfig = ""
 		}
 	}
 
-	//Invalidate previous IP
+	// old IP should be invalidated
 	v.resetIp()
 
 	return returnMessage, returnError
+}
+
+func (v *VpnClientAggregator) Disconnect() error {
+	v.mu.Lock()
+	defer v.mu.Unlock()
+
+	message, err := v.disconnectInternal()
+
+	v.message = message
+	v.activeVpnClient = ""
+	v.activeVpnConfig = ""
+
+	return err
 }
 
 func (v *VpnClientAggregator) resetIp() {

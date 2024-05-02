@@ -34,4 +34,9 @@ div.article {
     background-color: white;
 }
 
+div.message {
+    border-top-style: groove;
+    border-top-width: 2px
+}
+
 

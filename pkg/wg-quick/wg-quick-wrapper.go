@@ -92,8 +92,9 @@ func (v *WgQuick) Connect(wgQuickConfig string) (string, error) {
 
 	log.Info(v.wgQuickCommand, fmt.Sprintf("up %s", v.wireguardNetworkInterfaceName))
 
-	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("%s up %s", v.wgQuickCommand, v.wireguardNetworkInterfaceName))
-	result, err := cmd.Output()
+	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("%s up %s 1>&2", v.wgQuickCommand, v.wireguardNetworkInterfaceName))
+
+	result, err := cmd.CombinedOutput()
 
 	if err != nil {
 
@@ -118,12 +119,13 @@ func (v *WgQuick) Disconnect() (string, error) {
 	defer v.mu.Unlock()
 
 	if _, err := net.InterfaceByName(v.wireguardNetworkInterfaceName); err != nil {
-		return "wireguard was not connected", nil
+		log.Info("disconnect successful, wireguard was not connected")
+		return "", nil
 	}
 
 	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf("%s down %s", v.wgQuickCommand, v.wireguardNetworkInterfaceName))
 
-	result, err := cmd.Output()
+	result, err := cmd.CombinedOutput()
 	if err != nil {
 		errorMessage := err.Error()
 
