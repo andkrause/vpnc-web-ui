@@ -87,7 +87,7 @@ make build
 
 ## Docker
 
-The gateway can also be deployed as a docker container. I use this to simplify maintenance and ensure portability. But be aware this is still abit experimental and probably depends a lot on how docker is setup on the host itself. 
+The gateway can also be deployed as a docker container. I use this to simplify maintenance and ensure portability. 
 
 To run the gateway on a dedicated IP with **full** network access (which is required), I use  a [macvlan network](https://docs.docker.com/network/macvlan/). This network named `docker_public_services` is pre-created using the following command:
 
