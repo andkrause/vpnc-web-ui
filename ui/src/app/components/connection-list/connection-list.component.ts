@@ -2,9 +2,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { VPNConfig } from '../../models/api.models';
 
 @Component({
-  selector: 'app-connection-list',
-  templateUrl: './connection-list.component.html',
-  styleUrls: ['./connection-list.component.scss']
+    selector: 'app-connection-list',
+    templateUrl: './connection-list.component.html',
+    styleUrls: ['./connection-list.component.scss'],
+    standalone: false
 })
 export class ConnectionListComponent {
   @Input() connections: VPNConfig[] = [];

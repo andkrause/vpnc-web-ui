@@ -2,9 +2,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { VPNConfig } from '../../models/api.models';
 
 @Component({
-  selector: 'app-connection-card',
-  templateUrl: './connection-card.component.html',
-  styleUrls: ['./connection-card.component.scss']
+    selector: 'app-connection-card',
+    templateUrl: './connection-card.component.html',
+    styleUrls: ['./connection-card.component.scss'],
+    standalone: false
 })
 export class ConnectionCardComponent {
   @Input() connection!: VPNConfig;
