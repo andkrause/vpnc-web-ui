@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -12,22 +12,15 @@ import { HeaderComponent } from './components/header/header.component';
 
 import { VpnService } from './services/vpn.service';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    DashboardComponent,
-    ConnectionListComponent,
-    ConnectionCardComponent,
-    StatusCardComponent,
-    HeaderComponent
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
-  providers: [VpnService],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        DashboardComponent,
+        ConnectionListComponent,
+        ConnectionCardComponent,
+        StatusCardComponent,
+        HeaderComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        FormsModule,
+        ReactiveFormsModule], providers: [VpnService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { } 
