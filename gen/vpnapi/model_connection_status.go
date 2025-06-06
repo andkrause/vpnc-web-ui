@@ -10,6 +10,9 @@
 
 package vpnapi
 
+
+
+
 type ConnectionStatus struct {
 
 	// Indicates whether a specific connection is currently active or not

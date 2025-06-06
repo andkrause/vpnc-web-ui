@@ -1,0 +1,18 @@
+{
+    "waitTimeAfterConnect": 1,
+    "serverPort": 80,
+    "ipEchoURL": "https://ipecho.net/plain",
+    "maxAgePublicIp": "2h",
+    "vpnc": {
+        "connectCommand": "echo",
+        "disconnectCommand": "echo",
+        "configFolder": "/Users/a.krause/tmp/vpnc-go/vpnc-web-ui/conf",
+        "vpncNetworkInterfaceName": "tun0"
+    },
+    "wireguard": {
+        "wgQuickCommand": "echo",
+        "configFolder": "/Users/a.krause/tmp/vpnc-go/vpnc-web-ui/conf",
+        "wgQuickConfigSearchDir": "/Users/a.krause/tmp/vpnc-go/vpnc-web-ui/conf/temp",
+        "wireguardNetworkInterfaceName": "wg0"
+    }
+}

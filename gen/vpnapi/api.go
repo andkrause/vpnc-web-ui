@@ -15,36 +15,39 @@ import (
 	"net/http"
 )
 
+
+
 // VpnConnectionAPIRouter defines the required methods for binding the api requests to a responses for the VpnConnectionAPI
 // The VpnConnectionAPIRouter implementation should parse necessary information from the http request,
 // pass the data to a VpnConnectionAPIServicer to perform the required actions, then write the service results to the http response.
-type VpnConnectionAPIRouter interface {
+type VpnConnectionAPIRouter interface { 
 	ListConnections(http.ResponseWriter, *http.Request)
 	ReadConnectionStatus(http.ResponseWriter, *http.Request)
 	SetConnectionStatus(http.ResponseWriter, *http.Request)
 }
-
 // VpnGatewayAPIRouter defines the required methods for binding the api requests to a responses for the VpnGatewayAPI
 // The VpnGatewayAPIRouter implementation should parse necessary information from the http request,
 // pass the data to a VpnGatewayAPIServicer to perform the required actions, then write the service results to the http response.
-type VpnGatewayAPIRouter interface {
+type VpnGatewayAPIRouter interface { 
 	OverallStatus(http.ResponseWriter, *http.Request)
 }
+
 
 // VpnConnectionAPIServicer defines the api actions for the VpnConnectionAPI service
 // This interface intended to stay up to date with the openapi yaml used to generate it,
 // while the service implementation can be ignored with the .openapi-generator-ignore file
 // and updated with the logic required for the API.
-type VpnConnectionAPIServicer interface {
+type VpnConnectionAPIServicer interface { 
 	ListConnections(context.Context) (ImplResponse, error)
 	ReadConnectionStatus(context.Context, string, string) (ImplResponse, error)
 	SetConnectionStatus(context.Context, string, string, DesiredConnectionStatus) (ImplResponse, error)
 }
 
+
 // VpnGatewayAPIServicer defines the api actions for the VpnGatewayAPI service
 // This interface intended to stay up to date with the openapi yaml used to generate it,
 // while the service implementation can be ignored with the .openapi-generator-ignore file
 // and updated with the logic required for the API.
-type VpnGatewayAPIServicer interface {
+type VpnGatewayAPIServicer interface { 
 	OverallStatus(context.Context) (ImplResponse, error)
 }

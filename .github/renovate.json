@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "assignees": ["andkrause"],
+  "schedule": ["before 6am on monday"],
+  "golang": {
+    "enabled": true,
+    "postUpdateOptions": ["gomodTidy"]
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchPackageNames": ["golang"],
+      "matchManagers": ["dockerfile"],
+      "enabled": true
+    },
+    {
+      "matchPackagePatterns": ["^@angular/"],
+      "enabled": true,
+      "major": {
+        "enabled": false
+      }
+    }
+  ]
+} 

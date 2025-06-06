@@ -10,6 +10,9 @@
 
 package vpnapi
 
+
+
+
 type Status struct {
 
 	// Public IP that requests going through this gateway will have as a source
@@ -31,7 +34,7 @@ func AssertStatusRequired(obj Status) error {
 		"currentPublicIp": obj.CurrentPublicIp,
 		"activeVpnClient": obj.ActiveVpnClient,
 		"activeVpnConfig": obj.ActiveVpnConfig,
-		"message":         obj.Message,
+		"message": obj.Message,
 	}
 	for name, el := range elements {
 		if isZero := IsZeroValue(el); isZero {

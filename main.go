@@ -4,14 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/andkrause/vpnc-web-ui/gen/vpnapi"
 	"github.com/andkrause/vpnc-web-ui/pkg/api"
 	"github.com/andkrause/vpnc-web-ui/pkg/config"
 	"github.com/andkrause/vpnc-web-ui/pkg/vpnc"
 	"github.com/andkrause/vpnc-web-ui/pkg/vpnclient"
-	"github.com/andkrause/vpnc-web-ui/pkg/web"
 	wgquick "github.com/andkrause/vpnc-web-ui/pkg/wg-quick"
 	log "github.com/sirupsen/logrus"
 )
@@ -64,13 +62,6 @@ func main() {
 		serverConfig.IPEchoURL, serverConfig.GetMaxAgePublicIpDuration(), vpnContainer...,
 	)
 
-	//Serve UI
-	ui, err := web.New(vpnAggregator)
-	if err != nil {
-		log.Error(err.Error())
-		os.Exit(2)
-	}
-
 	//API stuff
 
 	//Implementation
@@ -83,11 +74,8 @@ func main() {
 	//API Router
 	router := vpnapi.NewRouter(vpnConnectionApi, vpnGatewayApi)
 
-	//UI Handler
-	router.Handle("/", ui)
-
-	// Serve static stuff
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("./static"))))
+	// Serve the Angular SPA with proper routing support
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("ui/dist/vpn-gateway-ui")))
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", serverConfig.ServerPort),

@@ -13,9 +13,23 @@ updates:
       interval: "daily"
     assignees:
       - "andkrause"
-  - package-ecosystem: gomod
-    directory: /
+  - package-ecosystem: "gomod"
+    directory: "/"
     schedule:
       interval: "daily"
     assignees:
       - "andkrause"
+    open-pull-requests-limit: 10
+  - package-ecosystem: "npm"
+    directory: "/ui"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "andkrause"
+    open-pull-requests-limit: 10
+    # Ignore Angular major version updates to avoid breaking changes
+    ignore:
+      - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]

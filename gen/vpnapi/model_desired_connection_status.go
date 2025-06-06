@@ -10,6 +10,9 @@
 
 package vpnapi
 
+
+
+
 type DesiredConnectionStatus struct {
 
 	// Indicates whether a specific should be active or not

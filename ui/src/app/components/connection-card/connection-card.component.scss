@@ -1,0 +1,175 @@
+.connection-card {
+  transition: var(--transition);
+  cursor: pointer;
+  user-select: none;
+  border: 2px solid transparent;
+}
+
+.connection-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--gray-300);
+}
+
+.connection-card.card-active {
+  border-color: var(--success);
+  background-color: rgba(40, 167, 69, 0.02);
+}
+
+.connection-card.card-active:hover {
+  border-color: var(--danger);
+  background-color: rgba(220, 53, 69, 0.02);
+}
+
+.connection-card.card-loading {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.connection-card.card-loading:hover {
+  transform: none;
+  border-color: transparent;
+}
+
+.connection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.connection-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.connection-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--primary-black);
+}
+
+.connection-client-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.client-badge-wireguard,
+.client-badge-vpnc,
+.client-badge-default {
+  background: linear-gradient(135deg, #1F2937, #374151);
+  color: white;
+  border-color: #1F2937;
+  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.3);
+}
+
+.connection-client-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(31, 41, 55, 0.4);
+}
+
+.connection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.connection-details {
+  margin-bottom: 16px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 13px;
+  color: var(--primary-black);
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.connection-action-hint {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: var(--border-radius);
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px dashed var(--gray-300);
+}
+
+.action-text {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.connection-card:hover .action-text {
+  color: var(--gray-700);
+}
+
+.connection-card.card-active:hover .action-text {
+  color: var(--danger);
+}
+
+.connection-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: var(--border-radius);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.loading-text {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .connection-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .connection-status {
+    align-self: flex-end;
+  }
+} 

@@ -10,6 +10,9 @@
 
 package vpnapi
 
+
+
+
 type VpnConfig struct {
 
 	// ID of a VPN Configuration that the gateway can connect to
@@ -27,10 +30,10 @@ type VpnConfig struct {
 // AssertVpnConfigRequired checks if the required fields are not zero-ed
 func AssertVpnConfigRequired(obj VpnConfig) error {
 	elements := map[string]interface{}{
-		"id":            obj.Id,
+		"id": obj.Id,
 		"vpnClientName": obj.VpnClientName,
-		"configName":    obj.ConfigName,
-		"status":        obj.Status,
+		"configName": obj.ConfigName,
+		"status": obj.Status,
 	}
 	for name, el := range elements {
 		if isZero := IsZeroValue(el); isZero {
@@ -46,5 +49,8 @@ func AssertVpnConfigRequired(obj VpnConfig) error {
 
 // AssertVpnConfigConstraints checks if the values respects the defined constraints
 func AssertVpnConfigConstraints(obj VpnConfig) error {
+	if err := AssertConnectionStatusConstraints(obj.Status); err != nil {
+		return err
+	}
 	return nil
 }

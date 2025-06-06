@@ -20,7 +20,7 @@ import (
 
 // VpnConnectionAPIController binds http requests to an api service and writes the service results to the http response
 type VpnConnectionAPIController struct {
-	service      VpnConnectionAPIServicer
+	service VpnConnectionAPIServicer
 	errorHandler ErrorHandler
 }
 
@@ -35,7 +35,7 @@ func WithVpnConnectionAPIErrorHandler(h ErrorHandler) VpnConnectionAPIOption {
 }
 
 // NewVpnConnectionAPIController creates a default api controller
-func NewVpnConnectionAPIController(s VpnConnectionAPIServicer, opts ...VpnConnectionAPIOption) Router {
+func NewVpnConnectionAPIController(s VpnConnectionAPIServicer, opts ...VpnConnectionAPIOption) *VpnConnectionAPIController {
 	controller := &VpnConnectionAPIController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
@@ -78,7 +78,7 @@ func (c *VpnConnectionAPIController) ListConnections(w http.ResponseWriter, r *h
 		return
 	}
 	// If no error, encode the body and the result code
-	EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
 // ReadConnectionStatus - Read connection status
@@ -101,7 +101,7 @@ func (c *VpnConnectionAPIController) ReadConnectionStatus(w http.ResponseWriter,
 		return
 	}
 	// If no error, encode the body and the result code
-	EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
 // SetConnectionStatus - Set connection status
@@ -117,7 +117,7 @@ func (c *VpnConnectionAPIController) SetConnectionStatus(w http.ResponseWriter, 
 		c.errorHandler(w, r, &RequiredError{"client"}, nil)
 		return
 	}
-	desiredConnectionStatusParam := DesiredConnectionStatus{}
+	var desiredConnectionStatusParam DesiredConnectionStatus
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
 	if err := d.Decode(&desiredConnectionStatusParam); err != nil {
@@ -139,5 +139,5 @@ func (c *VpnConnectionAPIController) SetConnectionStatus(w http.ResponseWriter, 
 		return
 	}
 	// If no error, encode the body and the result code
-	EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }

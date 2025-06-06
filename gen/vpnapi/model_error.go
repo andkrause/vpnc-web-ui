@@ -10,6 +10,9 @@
 
 package vpnapi
 
+
+
+
 // Error - Generic Error
 type Error struct {
 

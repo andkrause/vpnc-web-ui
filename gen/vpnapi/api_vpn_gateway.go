@@ -17,7 +17,7 @@ import (
 
 // VpnGatewayAPIController binds http requests to an api service and writes the service results to the http response
 type VpnGatewayAPIController struct {
-	service      VpnGatewayAPIServicer
+	service VpnGatewayAPIServicer
 	errorHandler ErrorHandler
 }
 
@@ -32,7 +32,7 @@ func WithVpnGatewayAPIErrorHandler(h ErrorHandler) VpnGatewayAPIOption {
 }
 
 // NewVpnGatewayAPIController creates a default api controller
-func NewVpnGatewayAPIController(s VpnGatewayAPIServicer, opts ...VpnGatewayAPIOption) Router {
+func NewVpnGatewayAPIController(s VpnGatewayAPIServicer, opts ...VpnGatewayAPIOption) *VpnGatewayAPIController {
 	controller := &VpnGatewayAPIController{
 		service:      s,
 		errorHandler: DefaultErrorHandler,
@@ -65,5 +65,5 @@ func (c *VpnGatewayAPIController) OverallStatus(w http.ResponseWriter, r *http.R
 		return
 	}
 	// If no error, encode the body and the result code
-	EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
