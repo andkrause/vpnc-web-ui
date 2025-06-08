@@ -7,6 +7,7 @@ COPY ui/ .
 RUN npm install
 RUN npm run build
 
+
 FROM golang:1.24.4-alpine3.22 AS go-builder
 
 WORKDIR /app
