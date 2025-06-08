@@ -23,19 +23,19 @@
 }
 
 .brand-title {
-  font-size: 18px;
-  font-weight: 500;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   margin: 0;
   color: var(--primary-black);
   opacity: 1;
 }
 
 .brand-subtitle {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--gray-400);
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 .header-nav {
@@ -46,11 +46,11 @@
 .nav-link {
   color: var(--gray-400);
   text-decoration: none;
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   padding: 8px 16px;
   border-radius: var(--border-radius);
   transition: var(--transition);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
 .nav-link:hover {
@@ -68,9 +68,5 @@
     flex-direction: column;
     gap: 12px;
     text-align: center;
-  }
-  
-  .brand-title {
-    font-size: 16px;
   }
 } 

@@ -1,8 +1,12 @@
 {
-  "/api/*": {
+  "/api/**": {
     "target": "http://localhost:80",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
   }
 } 

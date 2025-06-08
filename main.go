@@ -75,7 +75,7 @@ func main() {
 	router := vpnapi.NewRouter(vpnConnectionApi, vpnGatewayApi)
 
 	// Serve the Angular SPA with proper routing support
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("ui/dist/vpn-gateway-ui")))
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("ui/dist/vpn-gateway-ui/browser")))
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", serverConfig.ServerPort),

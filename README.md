@@ -3,13 +3,21 @@
 ## Table Of Contents 
 - [VPNC Web UI](#vpnc-web-ui)
   - [Table Of Contents](#table-of-contents)
+  - [Architecture](#architecture)
   - [Configuration](#configuration)
   - [REST API](#rest-api)
   - [Install](#install)
   - [Build](#build)
+  - [Development](#development)
   - [Docker](#docker)
 
 This is a small web ui on top of [vpnc](https://davidepucci.it/doc/vpnc/) and [wireguard](https://www.wireguard.com/). I use this to remote-control my IPSec/Wireguard vpn gateway running on top of a Raspberry Pi 4b. It basically replaces the need to run shell commands.
+
+## Architecture
+
+The application consists of two main components:
+- **Backend**: Go server providing REST API endpoints for VPN management
+- **Frontend**: Modern Angular web application with responsive design and real-time status updates
 
 ## Configuration
 
@@ -79,11 +87,65 @@ To start the server use and init-script. Samples are found in this [init scripts
 
 ## Build 
 
-Since this is a "normal" golang application it requires a golang environment to be installed. It is then built using the following command:
+The application requires both Go and Node.js environments to build:
 
-```
+**Prerequisites:**
+- Go 1.24.4+ for the backend server
+- Node.js 18+ and npm for the Angular frontend
+- OpenAPI Generator and goimports (for API generation)
+
+**Build Commands:**
+
+```bash
+# Build everything (API generation, UI build, and Go server)
+make all
+
+# Build only the backend server
 make build
+
+# Build only the Angular UI
+make ui-build
+
+# Install UI dependencies
+make ui-install
+
+# Generate API code from OpenAPI spec
+make generate
+
+# Clean build artifacts
+make clean
 ```
+
+The build process:
+1. `make generate` - Generates Go server code from the OpenAPI specification
+2. `make ui-build` - Builds the Angular application (installs npm dependencies if needed) 
+3. `make build` - Compiles the Go server with the embedded Angular assets
+4. Final binary: `vpnc-web-ui`
+
+## Development
+
+**Frontend Development:**
+The Angular application is located in the `ui/` directory. For development:
+
+```bash
+cd ui
+npm install
+npm run serve
+```
+
+This starts the Angular development server with hot reload at http://localhost:4200. The development server proxies API requests to the Go backend.
+
+**Backend Development:**
+The Go server serves both the API and the built Angular application. During development, you can run the Go server separately and the Angular dev server will proxy requests to it.
+
+**Available Make Targets:**
+- `make all` - Complete build pipeline
+- `make build` - Build Go server only
+- `make ui-build` - Build Angular UI only  
+- `make ui-install` - Install npm dependencies
+- `make generate` - Generate API code
+- `make go-deps` - Download and tidy Go dependencies
+- `make clean` - Remove build artifacts
 
 ## Docker
 
