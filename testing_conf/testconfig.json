@@ -1,0 +1,18 @@
+{
+    "waitTimeAfterConnect": 1,
+    "serverPort": 80,
+    "ipEchoURL": "https://ipecho.net/plain",
+    "maxAgePublicIp": "2h",
+    "vpnc": {
+        "connectCommand": "echo",
+        "disconnectCommand": "echo andreas",
+        "configFolder": "testing_conf/vpnc",
+        "vpncNetworkInterfaceName": "tun0"
+    },
+    "wireguard": {
+        "wgQuickCommand": "echo",
+        "configFolder": "testing_conf/wireguard",
+        "wireguardNetworkInterfaceName": "wg0",
+        "wgQuickConfigSearchDir": "testing_conf/wireguard/active"
+    }
+}
