@@ -5,7 +5,7 @@
     "maxAgePublicIp": "2h",
     "vpnc": {
         "connectCommand": "echo",
-        "disconnectCommand": "echo andreas",
+        "disconnectCommand": "echo",
         "configFolder": "testing_conf/vpnc",
         "vpncNetworkInterfaceName": "tun0"
     },
