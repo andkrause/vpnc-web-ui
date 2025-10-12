@@ -41,7 +41,7 @@ jobs:
       
       - name: Create issue for Go update
         if: steps.compare.outputs.update-needed == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const current = '${{ steps.current-version.outputs.current }}';
