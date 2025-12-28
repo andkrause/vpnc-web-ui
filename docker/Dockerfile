@@ -1,5 +1,5 @@
 ## Build
-FROM node:lts-alpine3.22 AS ui-builder
+FROM node:lts-alpine3.23 AS ui-builder
 
 WORKDIR /ui
 COPY ui/ .
@@ -7,7 +7,7 @@ COPY ui/ .
 RUN npm install
 RUN npm run build
 
-FROM golang:1.24.4-alpine3.22 AS go-builder
+FROM golang:1.25-alpine3.23 AS go-builder
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ COPY main.go ./
 RUN go mod tidy && go build -o /vpnc-web-ui main.go
 
 ## Deploy
-FROM alpine:3.22
+FROM alpine:3.23
 
 ENV VPNC_INTERFACE=tun0
 ENV WIREGUARD_INTERFACE=wg0

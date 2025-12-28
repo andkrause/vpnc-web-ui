@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideZoneChangeDetection } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -21,6 +22,7 @@ import { VpnService } from './services/vpn.service';
         HeaderComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
+        HttpClientModule,
         FormsModule,
-        ReactiveFormsModule], providers: [VpnService, provideHttpClient(withInterceptorsFromDi())] })
+        ReactiveFormsModule], providers: [VpnService, provideZoneChangeDetection({ eventCoalescing: true })] })
 export class AppModule { } 
