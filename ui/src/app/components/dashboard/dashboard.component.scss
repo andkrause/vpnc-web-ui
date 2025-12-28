@@ -39,4 +39,52 @@
 
 .alert-close:hover {
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.alert-close {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+.alert-close:focus-visible {
+  outline: 3px solid var(--primary-black);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .alert {
+    margin-bottom: 16px;
+  }
+  
+  .alert-content {
+    gap: 12px;
+  }
+  
+  .alert-close {
+    min-width: var(--touch-target-comfortable);
+    min-height: var(--touch-target-comfortable);
+    width: var(--touch-target-comfortable);
+    height: var(--touch-target-comfortable);
+  }
+}
+
+/* TV Optimizations */
+@media (min-width: 1920px) {
+  .alert {
+    padding: 24px;
+    margin-bottom: 32px;
+    border-width: 2px;
+  }
+  
+  .alert-close {
+    min-width: 56px;
+    min-height: 56px;
+    width: 56px;
+    height: 56px;
+    font-size: var(--font-size-2xl);
+  }
+  
+  .alert-message {
+    font-size: var(--font-size-lg);
+  }
 } 

@@ -27,7 +27,7 @@
   --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
   
-  /* Typography Scale */
+  /* Typography Scale - Base (Desktop) */
   --font-size-xs: 0.75rem;    /* 12px */
   --font-size-sm: 0.875rem;   /* 14px */
   --font-size-base: 1rem;     /* 16px */
@@ -35,6 +35,10 @@
   --font-size-xl: 1.25rem;    /* 20px */
   --font-size-2xl: 1.5rem;    /* 24px */
   --font-size-3xl: 1.875rem;  /* 30px */
+  
+  /* Touch Target Sizes */
+  --touch-target-min: 44px;  /* Minimum touch target for mobile */
+  --touch-target-comfortable: 48px; /* Comfortable touch target */
   
   /* Line Heights */
   --line-height-tight: 1.25;
@@ -46,6 +50,10 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  
+  /* Spacing for mobile/TV */
+  --spacing-touch: 12px;      /* Minimum spacing between touch targets */
+  --spacing-comfortable: 16px; /* Comfortable spacing */
 }
 
 body {
@@ -54,6 +62,12 @@ body {
   color: var(--primary-black);
   line-height: var(--line-height-normal);
   font-size: var(--font-size-sm);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent text selection on mobile for better UX */
+  -webkit-tap-highlight-color: transparent;
+  /* Better scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
 }
 
 .container {
@@ -91,8 +105,17 @@ body {
   cursor: pointer;
   transition: var(--transition);
   min-width: 120px;
+  min-height: var(--touch-target-min); /* Touch-friendly minimum height */
   gap: 8px;
   user-select: none;
+  /* Better focus for TV/keyboard navigation */
+  outline: none;
+  position: relative;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--primary-black);
+  outline-offset: 2px;
 }
 
 .btn:hover:not(:disabled) {
@@ -442,17 +465,21 @@ body {
   color: var(--info);
 }
 
-/* Responsive Design */
+/* Responsive Design - Mobile */
 @media (max-width: 768px) {
   :root {
-    /* Proportional mobile scaling */
-    --font-size-xs: 0.6875rem;  /* 11px */
-    --font-size-sm: 0.8125rem;  /* 13px */
-    --font-size-base: 0.9375rem; /* 15px */
-    --font-size-lg: 1.0625rem;  /* 17px */
-    --font-size-xl: 1.1875rem;  /* 19px */
-    --font-size-2xl: 1.375rem;  /* 22px */
-    --font-size-3xl: 1.75rem;   /* 28px */
+    /* Slightly larger fonts for mobile readability */
+    --font-size-xs: 0.8125rem;  /* 13px */
+    --font-size-sm: 0.9375rem;  /* 15px */
+    --font-size-base: 1.0625rem; /* 17px */
+    --font-size-lg: 1.25rem;    /* 20px */
+    --font-size-xl: 1.375rem;   /* 22px */
+    --font-size-2xl: 1.625rem;  /* 26px */
+    --font-size-3xl: 2rem;      /* 32px */
+  }
+  
+  body {
+    font-size: var(--font-size-base);
   }
   
   .container {
@@ -460,15 +487,86 @@ body {
   }
   
   .card {
-    padding: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
   }
   
   .btn {
-    padding: 10px 20px;
+    padding: 14px 24px;
+    min-height: var(--touch-target-comfortable);
+    width: 100%;
+    max-width: 100%;
   }
   
   .grid-2,
   .grid-3 {
     grid-template-columns: 1fr;
+    gap: var(--spacing-comfortable);
+  }
+  
+  /* Larger touch targets for mobile */
+  button, a, input, select, textarea {
+    min-height: var(--touch-target-min);
+  }
+}
+
+/* TV and Large Screen Optimizations */
+@media (min-width: 1920px), (min-height: 1080px) and (orientation: landscape) {
+  :root {
+    /* Much larger fonts for TV viewing distance */
+    --font-size-xs: 1rem;       /* 16px */
+    --font-size-sm: 1.125rem;   /* 18px */
+    --font-size-base: 1.25rem;  /* 20px */
+    --font-size-lg: 1.5rem;     /* 24px */
+    --font-size-xl: 1.75rem;    /* 28px */
+    --font-size-2xl: 2.25rem;   /* 36px */
+    --font-size-3xl: 3rem;      /* 48px */
+    
+    /* Larger spacing for TV */
+    --spacing-touch: 24px;
+    --spacing-comfortable: 32px;
+    --border-radius: 12px;
+  }
+  
+  body {
+    font-size: var(--font-size-base);
+  }
+  
+  .container {
+    max-width: 1600px;
+    padding: 0 40px;
+  }
+  
+  .card {
+    padding: 40px;
+    margin-bottom: 32px;
+    border-width: 2px;
+  }
+  
+  .btn {
+    padding: 20px 40px;
+    min-height: 60px;
+    font-size: var(--font-size-lg);
+    border-radius: var(--border-radius);
+  }
+  
+  /* High contrast for TV */
+  .status-indicator,
+  .status-dot {
+    border-width: 2px;
+  }
+  
+  /* Larger focus indicators for remote navigation */
+  *:focus-visible {
+    outline-width: 4px;
+    outline-offset: 4px;
+  }
+}
+
+/* High DPI / Retina Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

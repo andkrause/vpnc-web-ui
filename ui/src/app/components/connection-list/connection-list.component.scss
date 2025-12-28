@@ -55,13 +55,70 @@
 }
 
 @media (max-width: 768px) {
+  .connections-section {
+    margin-top: 24px;
+  }
+  
   .connections-header {
     flex-direction: column;
     gap: 16px;
     align-items: stretch;
+    margin-bottom: 20px;
+  }
+  
+  .connections-title {
+    font-size: var(--font-size-xl);
   }
   
   .connections-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .empty-state {
+    min-height: 250px;
+    padding: 32px 20px;
+  }
+  
+  .empty-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .empty-description {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* TV Optimizations */
+@media (min-width: 1920px) {
+  .connections-section {
+    margin-top: 48px;
+  }
+  
+  .connections-header {
+    margin-bottom: 40px;
+  }
+  
+  .connections-title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .connections-grid {
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 32px;
+  }
+  
+  .empty-state {
+    min-height: 400px;
+    padding: 60px 40px;
+    border-width: 3px;
+  }
+  
+  .empty-title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .empty-description {
+    font-size: var(--font-size-lg);
   }
 } 
