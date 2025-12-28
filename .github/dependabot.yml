@@ -2,7 +2,7 @@ version: 2
 updates:
   # Enable version updates for docker
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: "/docker/Dockerfile"
     schedule:
       interval: "daily"
     assignees:
