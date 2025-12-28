@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       
       - name: Get current Go version from go.mod
         id: current-version
@@ -41,7 +41,7 @@ jobs:
       
       - name: Create issue for Go update
         if: steps.compare.outputs.update-needed == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const current = '${{ steps.current-version.outputs.current }}';
