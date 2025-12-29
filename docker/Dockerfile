@@ -21,7 +21,7 @@ COPY main.go ./
 RUN go mod tidy && go build -o /vpnc-web-ui main.go
 
 ## Deploy
-FROM alpine:3.22
+FROM alpine:3.23
 
 ENV VPNC_INTERFACE=tun0
 ENV WIREGUARD_INTERFACE=wg0
