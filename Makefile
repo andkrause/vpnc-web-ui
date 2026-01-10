@@ -16,8 +16,10 @@ ui-install:
 ui-build: ui-install
 	cd ui && npm run build
 
-build: main.go go-deps ui-build
+go-build: main.go go-deps
 	go build -o vpnc-web-ui main.go
+
+build: clean go-build ui-build
 	
 clean:
 	rm -f vpnc-web-ui

@@ -1,6 +1,6 @@
 module github.com/andkrause/vpnc-web-ui
 
-go 1.25
+go 1.25.0
 
 require github.com/sirupsen/logrus v1.9.3
 
