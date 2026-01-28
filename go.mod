@@ -2,7 +2,7 @@ module github.com/andkrause/vpnc-web-ui
 
 go 1.25.0
 
-require github.com/sirupsen/logrus v1.9.3
+require github.com/sirupsen/logrus v1.9.4
 
 require github.com/felixge/httpsnoop v1.0.4 // indirect
 
