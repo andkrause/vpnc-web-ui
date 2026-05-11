@@ -7,7 +7,7 @@ COPY . .
 RUN make ui-build
 
 
-FROM golang:1.26.2-alpine3.23 AS go-builder
+FROM golang:1.26.3-alpine3.23 AS go-builder
 RUN apk add --no-cache make
 
 WORKDIR /app
