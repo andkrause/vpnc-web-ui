@@ -15,7 +15,7 @@ COPY . .
 RUN make go-build
 
 ## Put it all together to create somethiung that can run
-FROM alpine:3.23
+FROM alpine:3.24
 
 ENV VPNC_INTERFACE=tun0
 ENV WIREGUARD_INTERFACE=wg0
