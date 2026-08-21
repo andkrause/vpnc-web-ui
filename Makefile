@@ -4,7 +4,7 @@ all: generate ui-build build docker
 
 generate: 
 	rm -rf gen
-	openapi-generator generate -i api/openapi.yaml  -g go-server --additional-properties=sourceFolder=gen/vpnapi,featureCORS=true,outputAsLibrary=true,packageName=vpnapi,onlyInterfaces=true
+	openapi-generator generate -i api/openapi.yaml  -g go-server --additional-properties=sourceFolder=gen/vpnapi,featureCORS=false,outputAsLibrary=true,packageName=vpnapi,onlyInterfaces=true
 	goimports -srcdir gen/vpncapi -w ./
 
 go-deps:
@@ -19,7 +19,10 @@ ui-build: ui-install
 go-build: main.go go-deps
 	go build -o vpnc-web-ui main.go
 
-build: clean go-build ui-build
+build:
+	$(MAKE) clean
+	$(MAKE) go-build
+	$(MAKE) ui-build
 	
 clean:
 	rm -f vpnc-web-ui

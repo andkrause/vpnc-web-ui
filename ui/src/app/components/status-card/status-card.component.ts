@@ -4,8 +4,7 @@ import { Status } from '../../models/api.models';
 @Component({
     selector: 'app-status-card',
     templateUrl: './status-card.component.html',
-    styleUrls: ['./status-card.component.scss'],
-    standalone: false
+    styleUrls: ['./status-card.component.scss']
 })
 export class StatusCardComponent {
   @Input() status: Status | null = null;

@@ -1,5 +1,5 @@
 ## Build
-FROM node:lts-alpine3.23 AS ui-builder
+FROM node:lts-alpine3.24 AS ui-builder
 RUN apk add --no-cache make
 
 WORKDIR /app
@@ -7,7 +7,7 @@ COPY . .
 RUN make ui-build
 
 
-FROM golang:1.25-alpine3.23 AS go-builder
+FROM golang:1.26-alpine3.24 AS go-builder
 RUN apk add --no-cache make
 
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY . .
 RUN make go-build
 
 ## Put it all together to create somethiung that can run
-FROM alpine:3.23
+FROM alpine:3.24
 
 ENV VPNC_INTERFACE=tun0
 ENV WIREGUARD_INTERFACE=wg0
@@ -32,7 +32,7 @@ RUN apk add --no-cache vpnc iptables wireguard-tools \
 # This container runs WireGuard in "gateway" mode and MUST NOT let wg-quick
 # modify /etc/resolv.conf.
 #
-# Alpine 3.23 pulls in openresolv >= 3.17, which enforces strict ownership
+# Alpine 3.23+ pulls in openresolv >= 3.17, which enforces strict ownership
 # of /etc/resolv.conf and expects an init system + resolver providers.
 # In Docker, those do not exist. As a result:
 #   - wg-quick invokes resolvconf when "DNS =" is present in wg config

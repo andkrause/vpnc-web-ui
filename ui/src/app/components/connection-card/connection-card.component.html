@@ -1,16 +1,17 @@
-<div class="connection-card card" 
-     [ngClass]="{'card-active': isActive, 'card-loading': isLoading}"
+<div class="connection-card card"
+     [class.card-active]="isActive"
+     [class.card-loading]="isLoading"
      [attr.title]="isActive ? 'Click to disconnect' : 'Click to connect'"
      (click)="onToggleConnection()">
-  
+
   <div class="connection-header">
     <div class="connection-info">
       <h3 class="connection-name">{{ connection.configName }}</h3>
-      <span class="connection-client-badge" [ngClass]="getClientBadgeClass()">
+      <span class="connection-client-badge" [class]="getClientBadgeClass()">
         {{ connection.vpnClientName }}
       </span>
     </div>
-    <div class="connection-status" [ngClass]="statusClass">
+    <div class="connection-status" [class]="statusClass">
       <div class="status-dot"></div>
       <span class="status-text">{{ statusText }}</span>
     </div>
@@ -23,12 +24,16 @@
     </div>
   </div>
 
-  <div class="connection-action-hint" *ngIf="!isLoading">
-    <span class="action-text">{{ isActive ? 'Click to disconnect' : 'Click to connect' }}</span>
-  </div>
+  @if (!isLoading) {
+    <div class="connection-action-hint">
+      <span class="action-text">{{ isActive ? 'Click to disconnect' : 'Click to connect' }}</span>
+    </div>
+  }
 
-  <div class="connection-loading" *ngIf="isLoading">
-    <span class="spinner"></span>
-    <span class="loading-text">{{ isActive ? 'Disconnecting...' : 'Connecting...' }}</span>
-  </div>
-</div> 
+  @if (isLoading) {
+    <div class="connection-loading">
+      <span class="spinner"></span>
+      <span class="loading-text">{{ isActive ? 'Disconnecting...' : 'Connecting...' }}</span>
+    </div>
+  }
+</div>

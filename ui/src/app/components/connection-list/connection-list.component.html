@@ -3,28 +3,35 @@
     <h2 class="connections-title">VPN Connections</h2>
   </div>
 
-  <div class="connections-grid" *ngIf="connections.length > 0">
-    <app-connection-card
-      *ngFor="let connection of connections; trackBy: trackByConnectionId"
-      [connection]="connection"
-      [isLoading]="isLoading"
-      (connect)="onConnect($event)"
-      (disconnect)="onDisconnect($event)">
-    </app-connection-card>
-  </div>
-
-  <div class="empty-state" *ngIf="connections.length === 0 && !isLoading">
-    <div class="empty-content">
-      <h3 class="empty-title">No VPN Connections</h3>
-      <p class="empty-description">No VPN connections are configured or available.</p>
-      <button class="btn btn-primary" (click)="onRefresh()">
-        Refresh
-      </button>
+  @if (connections.length > 0) {
+    <div class="connections-grid">
+      @for (connection of connections; track connection.id) {
+        <app-connection-card
+          [connection]="connection"
+          [isLoading]="isLoading"
+          (connect)="onConnect($event)"
+          (disconnect)="onDisconnect($event)">
+        </app-connection-card>
+      }
     </div>
-  </div>
+  }
 
-  <div class="loading" *ngIf="isLoading && connections.length === 0">
-    <div class="spinner"></div>
-    <span>Loading connections...</span>
-  </div>
-</div> 
+  @if (connections.length === 0 && !isLoading) {
+    <div class="empty-state">
+      <div class="empty-content">
+        <h3 class="empty-title">No VPN Connections</h3>
+        <p class="empty-description">No VPN connections are configured or available.</p>
+        <button class="btn btn-primary" (click)="onRefresh()">
+          Refresh
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (isLoading && connections.length === 0) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <span>Loading connections...</span>
+    </div>
+  }
+</div>
