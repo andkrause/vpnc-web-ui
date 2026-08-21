@@ -12,6 +12,7 @@ package vpnapi
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -20,7 +21,7 @@ import (
 
 // VpnConnectionAPIController binds http requests to an api service and writes the service results to the http response
 type VpnConnectionAPIController struct {
-	service VpnConnectionAPIServicer
+	service      VpnConnectionAPIServicer
 	errorHandler ErrorHandler
 }
 
@@ -52,16 +53,43 @@ func NewVpnConnectionAPIController(s VpnConnectionAPIServicer, opts ...VpnConnec
 func (c *VpnConnectionAPIController) Routes() Routes {
 	return Routes{
 		"ListConnections": Route{
+			"ListConnections",
 			strings.ToUpper("Get"),
 			"/api/v1/connections",
 			c.ListConnections,
 		},
 		"ReadConnectionStatus": Route{
+			"ReadConnectionStatus",
 			strings.ToUpper("Get"),
 			"/api/v1/connections/connection/{client}/{id}/",
 			c.ReadConnectionStatus,
 		},
 		"SetConnectionStatus": Route{
+			"SetConnectionStatus",
+			strings.ToUpper("Post"),
+			"/api/v1/connections/connection/{client}/{id}/",
+			c.SetConnectionStatus,
+		},
+	}
+}
+
+// OrderedRoutes returns all the api routes in a deterministic order for the VpnConnectionAPIController
+func (c *VpnConnectionAPIController) OrderedRoutes() []Route {
+	return []Route{
+		Route{
+			"ListConnections",
+			strings.ToUpper("Get"),
+			"/api/v1/connections",
+			c.ListConnections,
+		},
+		Route{
+			"ReadConnectionStatus",
+			strings.ToUpper("Get"),
+			"/api/v1/connections/connection/{client}/{id}/",
+			c.ReadConnectionStatus,
+		},
+		Route{
+			"SetConnectionStatus",
 			strings.ToUpper("Post"),
 			"/api/v1/connections/connection/{client}/{id}/",
 			c.SetConnectionStatus,
@@ -121,6 +149,11 @@ func (c *VpnConnectionAPIController) SetConnectionStatus(w http.ResponseWriter, 
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
 	if err := d.Decode(&desiredConnectionStatusParam); err != nil {
+		var requiredErr *RequiredError
+		if errors.As(err, &requiredErr) {
+			c.errorHandler(w, r, err, nil)
+			return
+		}
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}

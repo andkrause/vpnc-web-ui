@@ -10,8 +10,10 @@
 
 package vpnapi
 
-
-
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type Status struct {
 
@@ -28,20 +30,86 @@ type Status struct {
 	Message string `json:"message"`
 }
 
-// AssertStatusRequired checks if the required fields are not zero-ed
-func AssertStatusRequired(obj Status) error {
-	elements := map[string]interface{}{
-		"currentPublicIp": obj.CurrentPublicIp,
-		"activeVpnClient": obj.ActiveVpnClient,
-		"activeVpnConfig": obj.ActiveVpnConfig,
-		"message": obj.Message,
+// UnmarshalJSON validates required property keys then unmarshals into Status
+func (o *Status) UnmarshalJSON(data []byte) (err error) {
+	// Presence is checked against required fields that exist on this struct,
+	// including fields promoted from embedded allOf parents.
+	requiredProperties := []string{
+		"currentPublicIp",
+		"activeVpnClient",
+		"activeVpnConfig",
+		"message",
 	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
+
+	requiredNullableProperties := map[string]bool{
+		"currentPublicIp": false,
+		"activeVpnClient": false,
+		"activeVpnConfig": false,
+		"message":         false,
+	}
+
+	allowedJsonKeys := map[string]struct{}{
+		"currentPublicIp": {},
+		"activeVpnClient": {},
+		"activeVpnConfig": {},
+		"message":         {},
+	}
+
+	allProperties := make(map[string]json.RawMessage)
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		value, exists := allProperties[requiredProperty]
+		if !exists {
+			return &RequiredError{Field: requiredProperty}
+		}
+		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
+			return &RequiredError{Field: requiredProperty}
 		}
 	}
 
+	for key := range allProperties {
+		if _, exists := allowedJsonKeys[key]; !exists {
+			return fmt.Errorf("json: unknown field %q", key)
+		}
+	}
+
+	var decoded Status
+
+	if value, exists := allProperties["currentPublicIp"]; exists {
+		if err = json.Unmarshal(value, &decoded.CurrentPublicIp); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["activeVpnClient"]; exists {
+		if err = json.Unmarshal(value, &decoded.ActiveVpnClient); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["activeVpnConfig"]; exists {
+		if err = json.Unmarshal(value, &decoded.ActiveVpnConfig); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["message"]; exists {
+		if err = json.Unmarshal(value, &decoded.Message); err != nil {
+			return err
+		}
+	}
+
+	*o = decoded
+
+	return nil
+}
+
+// AssertStatusRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
+func AssertStatusRequired(obj Status) error {
 	return nil
 }
 

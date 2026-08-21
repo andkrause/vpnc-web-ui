@@ -1,28 +1,30 @@
 <div class="dashboard">
   <!-- Error Alert -->
-  <div class="alert alert-danger" *ngIf="error">
-    <div class="alert-content">
-      <span class="alert-message">{{ error }}</span>
-      <button class="alert-close" (click)="dismissError()" type="button">
-        ×
-      </button>
+  @if (error(); as errorMessage) {
+    <div class="alert alert-danger">
+      <div class="alert-content">
+        <span class="alert-message">{{ errorMessage }}</span>
+        <button class="alert-close" (click)="dismissError()" type="button">
+          ×
+        </button>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Status Section -->
-  <app-status-card 
-    [status]="status"
-    [isLoading]="isLoadingStatus"
+  <app-status-card
+    [status]="status()"
+    [isLoading]="isLoadingStatus()"
     (disconnectAll)="onDisconnectAll()"
     (refresh)="onRefresh()">
   </app-status-card>
 
   <!-- Connections Section -->
   <app-connection-list
-    [connections]="connections"
-    [isLoading]="isLoadingConnections"
+    [connections]="connections()"
+    [isLoading]="isLoadingConnections()"
     (connect)="onConnect($event)"
     (disconnect)="onDisconnect($event)"
     (refresh)="onRefresh()">
   </app-connection-list>
-</div> 
+</div>

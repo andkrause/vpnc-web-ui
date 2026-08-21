@@ -20,6 +20,18 @@ func parseInputs() (configFilePath string) {
 	return
 }
 
+func cors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, HEAD, POST")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 
 	configFilePath := parseInputs()
@@ -79,7 +91,7 @@ func main() {
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", serverConfig.ServerPort),
-		Handler: router,
+		Handler: cors(router),
 	}
 
 	fmt.Println("Starting server with config:")

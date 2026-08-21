@@ -17,7 +17,7 @@ import (
 
 // VpnGatewayAPIController binds http requests to an api service and writes the service results to the http response
 type VpnGatewayAPIController struct {
-	service VpnGatewayAPIServicer
+	service      VpnGatewayAPIServicer
 	errorHandler ErrorHandler
 }
 
@@ -49,6 +49,19 @@ func NewVpnGatewayAPIController(s VpnGatewayAPIServicer, opts ...VpnGatewayAPIOp
 func (c *VpnGatewayAPIController) Routes() Routes {
 	return Routes{
 		"OverallStatus": Route{
+			"OverallStatus",
+			strings.ToUpper("Get"),
+			"/api/v1/",
+			c.OverallStatus,
+		},
+	}
+}
+
+// OrderedRoutes returns all the api routes in a deterministic order for the VpnGatewayAPIController
+func (c *VpnGatewayAPIController) OrderedRoutes() []Route {
+	return []Route{
+		Route{
+			"OverallStatus",
 			strings.ToUpper("Get"),
 			"/api/v1/",
 			c.OverallStatus,
